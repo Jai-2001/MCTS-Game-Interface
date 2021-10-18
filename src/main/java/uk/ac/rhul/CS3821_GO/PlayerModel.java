@@ -7,5 +7,9 @@ public class PlayerModel {
         if(type == StoneTypes.NONE){
             throw new IllegalArgumentException("Player must either use white or black stones.");
         }
+        this.type = type;
+    }
+    public StoneTypes getType(){
+        return this.type;
     }
 }
