@@ -6,7 +6,7 @@ public class TurnState {
     final static PlayerModel PLAYER_WHITE = new PlayerModel(StoneTypes.WHITE);
 
     TurnState(){
-        this.current = PLAYER_WHITE;
+        this.current = PLAYER_BLACK;
     }
 
     public PlayerModel getCurrentPlayer() {

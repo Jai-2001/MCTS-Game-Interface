@@ -17,16 +17,16 @@ class TurnStateTest {
     @Test
     void testInit(){
        StoneTypes currentStone = defaultStates.getCurrentPlayer().getType();
-       assertEquals(StoneTypes.WHITE, currentStone);
+       assertEquals(StoneTypes.BLACK, currentStone);
     }
 
     @Test
     void testTurnSwitch(){
         StoneTypes whiteStone = defaultStates.getCurrentPlayer().getType();
-        assertEquals(StoneTypes.WHITE, whiteStone);
+        assertEquals(StoneTypes.BLACK, whiteStone);
         defaultStates.changePlayer();
         StoneTypes blackStone = defaultStates.getCurrentPlayer().getType();
-        assertEquals(StoneTypes.BLACK, blackStone);
+        assertEquals(StoneTypes.WHITE, blackStone);
     }
 
     @Test
@@ -35,9 +35,9 @@ class TurnStateTest {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             current = defaultStates.getCurrentPlayer().getType();
             if(i%2 == 0){
-                assertEquals(StoneTypes.WHITE, current);
-            }  else {
                 assertEquals(StoneTypes.BLACK, current);
+            }  else {
+                assertEquals(StoneTypes.WHITE, current);
             }
             defaultStates.changePlayer();
         }
@@ -50,9 +50,9 @@ class TurnStateTest {
         for (int i = 0; i < rng.nextInt(); i++) {
             current = defaultStates.getCurrentPlayer().getType();
             if(i%2 == 0){
-                assertEquals(StoneTypes.WHITE, current);
-            }  else {
                 assertEquals(StoneTypes.BLACK, current);
+            }  else {
+                assertEquals(StoneTypes.WHITE, current);
             }
             defaultStates.changePlayer();
         }

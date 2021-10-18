@@ -16,14 +16,14 @@ class GoModelTest {
     @Test
     void testInit(){
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();
-        assertEquals(TurnState.playerWhite, currentPlayer);
+        assertEquals(TurnState.PLAYER_BLACK, currentPlayer);
     }
 
     @Test
     void testNextTurn(){
         model.nextTurn();
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();
-        assertEquals(TurnState.playerBlack, currentPlayer);
+        assertEquals(TurnState.PLAYER_WHITE, currentPlayer);
     }
 
     @Test
