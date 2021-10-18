@@ -15,5 +15,9 @@ public class GoModel {
     public void nextTurn() {
         this.currentPlayerTurn.changePlayer();
     }
+
+    public int[][] getBoard() {
+        return new int[9][9];
+    }
 }
 

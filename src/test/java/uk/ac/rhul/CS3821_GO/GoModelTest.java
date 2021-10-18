@@ -25,4 +25,14 @@ class GoModelTest {
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();
         assertEquals(TurnState.playerBlack, currentPlayer);
     }
+
+    @Test
+    void testEmptyBoard(){
+        int[][] currentBoard = model.getBoard();
+        for (int[] column: currentBoard) {
+            for (int piece: column) {
+                assertEquals(0, piece);
+            }
+        }
+    }
 }
