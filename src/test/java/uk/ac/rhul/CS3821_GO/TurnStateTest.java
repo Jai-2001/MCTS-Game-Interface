@@ -17,4 +17,14 @@ class TurnStateTest {
        StoneTypes currentStone = defaultStates.getCurrentPlayer().getType();
        assertEquals(StoneTypes.WHITE, currentStone);
     }
+
+    @Test
+    void testTurnSwitch(){
+        StoneTypes whiteStone = defaultStates.getCurrentPlayer().getType();
+        assertEquals(StoneTypes.WHITE, whiteStone);
+        defaultStates.changePlayer();
+        StoneTypes currentStone = defaultStates.getCurrentPlayer().getType();
+        assertEquals(StoneTypes.WHITE, currentStone);
+    }
+
 }
