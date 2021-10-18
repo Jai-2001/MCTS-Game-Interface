@@ -2,6 +2,7 @@ package uk.ac.rhul.CS3821_GO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions.*;
 
 class IntersectionTest {
 
@@ -14,6 +15,16 @@ class IntersectionTest {
 
     @Test
     void testInit(){
-        assertEquals(StoneTypes.NONE, intersection.getStoneType());
+        assert(intersection.isCleared());
+    }
+
+    @Test
+    void testFields(){
+        intersection.setWhite();
+        assert(intersection.isWhite());
+        intersection.setBlack();
+        assert(intersection.isBlack());
+        intersection.clear();
+        assert(intersection.isCleared());
     }
 }
