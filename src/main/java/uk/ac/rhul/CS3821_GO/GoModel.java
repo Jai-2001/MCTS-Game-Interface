@@ -2,6 +2,9 @@ package uk.ac.rhul.CS3821_GO;
 
 public class GoModel {
 
+    final static int BOARD_SIZE_X = 9;
+    final static int BOARD_SIZE_Y = 9;
+
     private TurnState currentPlayerTurn;
 
     GoModel(){
@@ -17,7 +20,7 @@ public class GoModel {
     }
 
     public int[][] getBoard() {
-        return new int[9][9];
+        return new int[BOARD_SIZE_X][BOARD_SIZE_Y];
     }
 }
 
