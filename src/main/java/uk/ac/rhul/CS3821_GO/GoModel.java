@@ -6,5 +6,7 @@ public class GoModel {
         return new TurnState();
     }
 
+    public void nextTurn() {
+    }
 }
 
