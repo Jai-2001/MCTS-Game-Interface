@@ -22,4 +22,13 @@ class PlayerModelTest {
         );
     }
 
+    @Test
+    void testInvalidInit(){
+        assertThrows(IllegalArgumentException.class,
+                () -> {
+                    PlayerModel playerNone = new PlayerModel(StoneTypes.NONE);
+                }
+        );
+    }
+
 }
