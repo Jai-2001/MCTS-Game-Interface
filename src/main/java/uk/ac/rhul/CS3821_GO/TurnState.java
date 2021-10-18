@@ -12,4 +12,12 @@ public class TurnState {
     public PlayerModel getCurrentPlayer() {
         return current;
     }
+
+    public void changePlayer() {
+            if(getCurrentPlayer()==playerWhite){
+                this.current = playerBlack;
+            } else {
+                this.current = playerWhite;
+            }
+    }
 }
