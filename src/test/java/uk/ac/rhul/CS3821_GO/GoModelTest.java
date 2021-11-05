@@ -48,4 +48,12 @@ class GoModelTest {
         assertFalse(model.tryMove(2,2));
     }
 
+    @Test
+    void testChangedBoard(){
+        model.tryMove(2,2);
+        model.nextTurn();
+        int[][] changedBoard = model.getBoard();
+        assertEquals(1,changedBoard[2][2]);
+    }
+
 }
