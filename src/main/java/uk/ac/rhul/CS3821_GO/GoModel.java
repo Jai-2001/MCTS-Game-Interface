@@ -24,7 +24,7 @@ public class GoModel {
     }
 
     public boolean tryMove(int xPos, int yPos){
-        return true;
+        return this.currentPlayerTurn.getCurrentPlayer() == TurnState.PLAYER_BLACK;
     }
 }
 

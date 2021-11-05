@@ -40,4 +40,12 @@ class GoModelTest {
     void testTryMove(){
         assertTrue(model.tryMove(2,2));
     }
+
+    @Test
+    void testBadTryMove(){
+        model.tryMove(2,2);
+        model.nextTurn();
+        assertFalse(model.tryMove(2,2));
+    }
+
 }
