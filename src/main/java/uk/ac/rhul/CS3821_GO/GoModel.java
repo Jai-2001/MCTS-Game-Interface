@@ -22,5 +22,9 @@ public class GoModel {
     public int[][] getBoard() {
         return new int[BOARD_SIZE_X][BOARD_SIZE_Y];
     }
+
+    public boolean tryMove(int xPos, int yPos){
+        return true;
+    }
 }
 
