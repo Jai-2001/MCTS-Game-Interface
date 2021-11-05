@@ -30,4 +30,16 @@ public class Intersection {
         return this.stone == StoneTypes.NONE;
     }
 
+    public int getRepresentation(){
+        int representation = -1;
+            if (isCleared()){
+                representation = 0;
+            } else if(isBlack()){
+                representation = 1;
+            } else if (isWhite()) {
+                representation = 2;
+            }
+        return representation;
+    }
+
 }

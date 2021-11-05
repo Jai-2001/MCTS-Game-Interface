@@ -6,9 +6,20 @@ public class GoModel {
     final static int BOARD_SIZE_Y = 9;
 
     private TurnState currentPlayerTurn;
+    private Intersection[][] board;
+    private int[][] attemptedMove;
+    boolean moveWasValid;
 
     GoModel(){
         this.currentPlayerTurn = new TurnState();
+        this.board = new Intersection[BOARD_SIZE_X][BOARD_SIZE_Y];
+        for (int x = 0; x < BOARD_SIZE_X; x++) {
+            for (int y = 0; y < BOARD_SIZE_Y; y++) {
+                this.board[x][y] = new Intersection();
+            }
+        }
+        attemptedMove = null;
+        moveWasValid = false;
     }
 
     public TurnState getCurrentTurn() {
@@ -20,11 +31,21 @@ public class GoModel {
     }
 
     public int[][] getBoard() {
-        return new int[BOARD_SIZE_X][BOARD_SIZE_Y];
+        int[][] currentBoard = new int[BOARD_SIZE_X][BOARD_SIZE_Y];
+        for (int x = 0; x < BOARD_SIZE_X; x++) {
+            for (int y = 0; y < BOARD_SIZE_Y; y++) {
+                currentBoard[x][y] = board[x][y].getRepresentation();
+            }
+        }
+        return currentBoard;
     }
 
     public boolean tryMove(int xPos, int yPos){
-        return this.currentPlayerTurn.getCurrentPlayer() == TurnState.PLAYER_BLACK;
+            if (this.currentPlayerTurn.getCurrentPlayer() == TurnState.PLAYER_BLACK){
+                board[xPos][yPos].setBlack();
+                return true;
+            }
+        return false;
     }
 }
 
