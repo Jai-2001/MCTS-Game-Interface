@@ -7,7 +7,7 @@ public class GoViewController {
     public static void main(String[] args) {
         GoViewController game = new GoViewController();
         do{
-            game.inputMove();
+            game.inputMove(new Scanner(System.in));
         } while (game.updateBoardState());
     }
 
@@ -31,8 +31,7 @@ public class GoViewController {
         return false;
     }
 
-    public void inputMove() {
-
+    public void inputMove(Scanner inputBuffer) {
         this.view.printBoard(getIntBoard());
         int moveX = -1;
         int moveY = -1;
@@ -41,7 +40,7 @@ public class GoViewController {
             playerName = "White";
         }
         do {
-            String response[] = this.view.promptInput(playerName).split(",");
+            String response[] = this.view.promptInput(playerName, inputBuffer).split(",");
                 if (response[0].equals("q")){
                     this.model.moveWasValid = false;
                     break;

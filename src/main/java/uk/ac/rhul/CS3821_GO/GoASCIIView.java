@@ -1,6 +1,5 @@
 package uk.ac.rhul.CS3821_GO;
 
-
 import java.util.Scanner;
 
 public class GoASCIIView {
@@ -13,17 +12,16 @@ public class GoASCIIView {
                             break;
                             case 1: System.out.print('B');
                             break;
-                            case 2: System.out.println('W');
+                            case 2: System.out.print('W');
                         }
                     }
                 System.out.println();
             }
     }
 
-    public String promptInput(String playerName) {
-        Scanner input = new Scanner(System.in);
+    public String promptInput(String playerName, Scanner inputBuffer) {
         System.out.printf("%s, please input the intersection to place onto in the format 'x,y', or 'q' to quit:\n>  ", playerName);
-        String response = input.nextLine();
+        String response = inputBuffer.nextLine();
         System.out.print("\n");
         return response;
     }

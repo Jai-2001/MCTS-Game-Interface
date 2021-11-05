@@ -21,6 +21,7 @@ class GoModelTest {
 
     @Test
     void testNextTurn(){
+        model.tryMove(1,1);
         model.nextTurn();
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();
         assertEquals(TurnState.PLAYER_WHITE, currentPlayer);

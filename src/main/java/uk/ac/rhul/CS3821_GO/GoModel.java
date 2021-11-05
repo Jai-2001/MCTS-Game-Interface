@@ -7,7 +7,7 @@ public class GoModel {
 
     private TurnState currentPlayerTurn;
     private Intersection[][] board;
-    private int[][] attemptedMove;
+    private int[] attemptedMove;
     boolean moveWasValid;
 
     GoModel(){
@@ -18,7 +18,7 @@ public class GoModel {
                 this.board[x][y] = new Intersection();
             }
         }
-        attemptedMove = null;
+        attemptedMove = new int[2];
         moveWasValid = false;
     }
 
@@ -27,7 +27,17 @@ public class GoModel {
     }
 
     public void nextTurn() {
-        this.currentPlayerTurn.changePlayer();
+        Intersection relevant = this.board[attemptedMove[0]][attemptedMove[1]];
+        PlayerModel currentPlayer = this.currentPlayerTurn.getCurrentPlayer();
+        if (moveWasValid){
+            if(currentPlayer == TurnState.PLAYER_BLACK){
+                relevant.setBlack();
+            } else if(currentPlayer == TurnState.PLAYER_WHITE){
+                relevant.setWhite();
+            }
+            this.currentPlayerTurn.changePlayer();
+        }
+
     }
 
     public Intersection[][] getBoard(){
@@ -35,12 +45,13 @@ public class GoModel {
     }
 
     public boolean tryMove(int xPos, int yPos){
-            if (this.currentPlayerTurn.getCurrentPlayer() == TurnState.PLAYER_BLACK){
-                board[xPos][yPos].setBlack();
-                moveWasValid = true;
+        attemptedMove[0] = xPos;
+        attemptedMove[1] = yPos;
+            if (this.board[xPos][yPos].isCleared()){
+                this.moveWasValid = true;
                 return true;
             }
-        moveWasValid = false;
+        this.moveWasValid = false;
         return false;
     }
 }

@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,9 +46,10 @@ class GoASCIIViewTest {
         String arbitraryValidInput = "2,2\r\n";
         ByteArrayInputStream testInput = new ByteArrayInputStream(arbitraryValidInput.getBytes());
         System.setIn(testInput);
+        Scanner bufferScanner = new Scanner(System.in);
         assertDoesNotThrow(
                 () -> {
-                    textView.promptInput("White");
+                    textView.promptInput("White", bufferScanner);
                 }
         );
 
