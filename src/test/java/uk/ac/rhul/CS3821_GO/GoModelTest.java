@@ -35,4 +35,9 @@ class GoModelTest {
             }
         }
     }
+
+    @Test
+    void testTryMove(){
+        assertTrue(model.tryMove(2,2));
+    }
 }
