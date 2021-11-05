@@ -30,21 +30,17 @@ public class GoModel {
         this.currentPlayerTurn.changePlayer();
     }
 
-    public int[][] getBoard() {
-        int[][] currentBoard = new int[BOARD_SIZE_X][BOARD_SIZE_Y];
-        for (int x = 0; x < BOARD_SIZE_X; x++) {
-            for (int y = 0; y < BOARD_SIZE_Y; y++) {
-                currentBoard[x][y] = board[x][y].getRepresentation();
-            }
-        }
-        return currentBoard;
+    public Intersection[][] getBoard(){
+        return this.board.clone();
     }
 
     public boolean tryMove(int xPos, int yPos){
             if (this.currentPlayerTurn.getCurrentPlayer() == TurnState.PLAYER_BLACK){
                 board[xPos][yPos].setBlack();
+                moveWasValid = true;
                 return true;
             }
+        moveWasValid = false;
         return false;
     }
 }

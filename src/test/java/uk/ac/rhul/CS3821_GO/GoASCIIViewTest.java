@@ -34,7 +34,7 @@ class GoASCIIViewTest {
 
     @Test
     void testDimensions(){
-        textView.printBoard();
+        textView.printBoard(new int[GoModel.BOARD_SIZE_X][GoModel.BOARD_SIZE_Y]);
         String viewOutput = testOutput.toString().replace("\n","").replace("\r","");
         int desiredCharLength = GoModel.BOARD_SIZE_X * GoModel.BOARD_SIZE_Y;
         assertEquals(desiredCharLength, viewOutput.length());
@@ -48,7 +48,6 @@ class GoASCIIViewTest {
         assertDoesNotThrow(
                 () -> {
                     textView.promptInput("White");
-                    textView.printBoard();
                 }
         );
 

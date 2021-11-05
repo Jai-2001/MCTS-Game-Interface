@@ -28,10 +28,10 @@ class GoModelTest {
 
     @Test
     void testEmptyBoard(){
-        int[][] currentBoard = model.getBoard();
-        for (int[] column: currentBoard) {
-            for (int piece: column) {
-                assertEquals(0, piece);
+        Intersection[][] currentBoard = model.getBoard();
+        for (Intersection[] column: currentBoard) {
+            for (Intersection piece: column) {
+                assertEquals(0, piece.getRepresentation());
             }
         }
     }
@@ -52,8 +52,8 @@ class GoModelTest {
     void testChangedBoard(){
         model.tryMove(2,2);
         model.nextTurn();
-        int[][] changedBoard = model.getBoard();
-        assertEquals(1,changedBoard[2][2]);
+        Intersection[][] changedBoard = model.getBoard();
+        assertEquals(1,changedBoard[2][2].getRepresentation());
     }
 
 }
