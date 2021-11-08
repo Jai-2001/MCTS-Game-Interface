@@ -40,7 +40,7 @@ public class GoViewController {
             playerName = "White";
         }
         do {
-            String response[] = this.view.promptInput(playerName, inputBuffer).split(",");
+            String[] response = this.view.promptInput(playerName, inputBuffer).split(",");
                 if (response[0].equals("q")){
                     this.model.moveWasValid = false;
                     break;

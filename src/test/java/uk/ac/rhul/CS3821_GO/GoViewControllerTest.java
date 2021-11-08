@@ -26,6 +26,9 @@ class GoViewControllerTest {
     @BeforeEach
     void setUp() {
         System.setOut(new PrintStream(testOutput));
+        textView = new GoASCIIView();
+        testModel = new GoModel();
+        testController = new GoViewController(testModel, textView);
     }
 
     @AfterEach
@@ -36,23 +39,16 @@ class GoViewControllerTest {
 
     @Test
     void testProcessMove(){
-        textView = new GoASCIIView();
-        testModel = new GoModel();
-        testController = new GoViewController(testModel, textView);
-        String arbitraryValidInput = "2,2\r\nq\r\n";
+        String arbitraryValidInput = "2,2\r\n3,3\r\nq\r\n";
         ByteArrayInputStream testInput = new ByteArrayInputStream(arbitraryValidInput.getBytes());
         System.setIn(testInput);
         Scanner inputBuffer = new Scanner(System.in);
         testController.inputMove(inputBuffer);
         testController.updateBoardState();
+        testController.inputMove(inputBuffer);
+        testController.updateBoardState();
         inputBuffer.close();
-        String anotherValidInput = "q\r\n";
-        ByteArrayInputStream anotherStream = new ByteArrayInputStream(anotherValidInput.getBytes());
-        System.setIn(anotherStream);
-        Scanner anotherInputBuffer = new Scanner(System.in);
-        testController.inputMove(anotherInputBuffer);
         String viewOutput = testOutput.toString().replace("\r","");
-        anotherInputBuffer.close();
         String[] lines = viewOutput.split("\n");
         int linePlacedOn = GoModel.BOARD_SIZE_Y + 2 + 1;
         assertEquals('B', lines[linePlacedOn].charAt(1));
@@ -65,16 +61,16 @@ class GoViewControllerTest {
         ByteArrayInputStream testInput = new ByteArrayInputStream(arbitraryValidInput.getBytes());
         System.setIn(testInput);
         Scanner inputBuffer = new Scanner(System.in);
-        textView = new GoASCIIView();
-        testModel = new GoModel();
-        testController = new GoViewController(testModel, textView);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             testController.inputMove(inputBuffer);
             testController.updateBoardState();
-
         }
         inputBuffer.close();
-        String viewOutput = testOutput.toString().replace("\r","");
+        int[][] resultBoard = testController.getIntBoard();
+        assertEquals(1, resultBoard[1][1]);
+        assertEquals(2, resultBoard[1][2]);
+        assertEquals(1, resultBoard[1][3]);
+        assertEquals(2, resultBoard[2][1]);
 
     }
 }
