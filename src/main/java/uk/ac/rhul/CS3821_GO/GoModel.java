@@ -25,11 +25,7 @@ public class GoModel {
         Intersection relevant = this.board.getStone(attemptedMove[0],attemptedMove[1]);
         PlayerModel currentPlayer = this.currentPlayerTurn.getCurrentPlayer();
         if (moveWasValid){
-            if(currentPlayer == TurnState.PLAYER_BLACK){
-                relevant.setBlack();
-            } else if(currentPlayer == TurnState.PLAYER_WHITE){
-                relevant.setWhite();
-            }
+            this.board.confirmMove();
             this.currentPlayerTurn.changePlayer();
         }
 
