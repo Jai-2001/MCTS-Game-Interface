@@ -6,18 +6,13 @@ public class GoModel {
     final static int BOARD_SIZE_Y = 9;
 
     private TurnState currentPlayerTurn;
-    private Intersection[][] board;
+    private StoneMap board;
     private int[] attemptedMove;
     boolean moveWasValid;
 
     GoModel(){
         this.currentPlayerTurn = new TurnState();
-        this.board = new Intersection[BOARD_SIZE_X][BOARD_SIZE_Y];
-        for (int x = 0; x < BOARD_SIZE_X; x++) {
-            for (int y = 0; y < BOARD_SIZE_Y; y++) {
-                this.board[x][y] = new Intersection();
-            }
-        }
+        this.board = new StoneMap(BOARD_SIZE_X, BOARD_SIZE_Y);
         attemptedMove = new int[2];
         moveWasValid = false;
     }
@@ -27,7 +22,7 @@ public class GoModel {
     }
 
     public void nextTurn() {
-        Intersection relevant = this.board[attemptedMove[0]][attemptedMove[1]];
+        Intersection relevant = this.board.getStone(attemptedMove[0],attemptedMove[1]);
         PlayerModel currentPlayer = this.currentPlayerTurn.getCurrentPlayer();
         if (moveWasValid){
             if(currentPlayer == TurnState.PLAYER_BLACK){
@@ -40,14 +35,14 @@ public class GoModel {
 
     }
 
-    public Intersection[][] getBoard(){
-        return this.board.clone();
+    public Intersection[][] getBoard() {
+        return this.board.copy();
     }
 
     public boolean tryMove(int xPos, int yPos){
         attemptedMove[0] = xPos;
         attemptedMove[1] = yPos;
-            if (this.board[xPos][yPos].isCleared()){
+            if (this.board.copy()[xPos][yPos].isCleared()){
                 this.moveWasValid = true;
                 return true;
             }
