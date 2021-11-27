@@ -39,7 +39,12 @@ public class StoneMap {
     public boolean checkMove(int xPos, int yPos, PlayerModel currentPlayer) {
         this.wagered = this.grid[xPos][yPos];
         this.currentPlayer = currentPlayer;
-        return this.wagered.isCleared();
+        Set<int[]>currentOffsets = prepareOffsets(xPos, yPos);
+        boolean hasLiberty = false;
+        for (int[] offset : currentOffsets) {
+            hasLiberty |= this.grid[xPos + offset[0]][yPos + offset[1]].isCleared();
+        }
+        return hasLiberty && this.wagered.isCleared();
     }
 
     public void confirmMove(){
