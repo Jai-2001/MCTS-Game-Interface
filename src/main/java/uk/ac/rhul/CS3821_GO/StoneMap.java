@@ -1,9 +1,18 @@
 package uk.ac.rhul.CS3821_GO;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class StoneMap {
-    private Intersection[][] grid;
+
+    private final Intersection[][] grid;
     private Intersection wagered;
     private PlayerModel currentPlayer;
+
+    public static final int[][] OFFSETS_ARRAY = {{-1,-1},{0,-1},{1,-1},{0,-1},{0,1}, {1,-1},{1,0},{1,1}};
+    public static final Set<int[]> STANDARD_OFFSETS = new HashSet<int[]>(Arrays.asList(OFFSETS_ARRAY));
+
     StoneMap(int xSize, int ySize){
         this.grid = new Intersection[xSize][ySize];
         for (int x = 0; x < xSize; x++) {
@@ -13,6 +22,18 @@ public class StoneMap {
         }
         this.wagered = null;
         this.currentPlayer = null;
+    }
+
+    static Set<int[]> prepareOffsets(int xPos, int yPos){
+        Set<int[]> boundedOffsets = new HashSet<>();
+        for (int[] offset: STANDARD_OFFSETS) {
+            int newX = xPos + offset[0];
+            int newY = yPos + offset[1];
+            if(newX >= 0 && newX < GoModel.BOARD_SIZE_X && newY >= 0 && newY < GoModel.BOARD_SIZE_Y){
+                boundedOffsets.add(offset);
+            }
+        }
+        return boundedOffsets;
     }
 
     public boolean checkMove(int xPos, int yPos, PlayerModel currentPlayer) {
