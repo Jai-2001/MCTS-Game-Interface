@@ -24,12 +24,12 @@ class StoneMapTest {
 
     @Test
     void testBoundedOffsets(){
-        Set<int[]> topLeftRejects = new HashSet<>(Arrays.asList(new int[][]{{-1, 1},{-1,0},{-1,-1},{0,-1},{1,-1}}));
+        Set<int[]> topLeftRejects = new HashSet<>(Arrays.asList(new int[][]{{-1,0}, {0,-1}}));
         Set<int[]> topLeftBounded = StoneMap.prepareOffsets(0,0);
         for (int[] rejected : topLeftRejects) {
             assertFalse(topLeftBounded.stream().anyMatch(bounded -> Arrays.equals(bounded, rejected)));
         }
-        Set<int[]> bottomRightRejects = new HashSet<>(Arrays.asList(new int[][]{{-1,1},{0,1},{1,1},{1,0},{1,-1}}));
+        Set<int[]> bottomRightRejects = new HashSet<>(Arrays.asList(new int[][]{{0,1},{1,0}}));
         Set<int[]> bottomRightBounded = StoneMap.prepareOffsets(8,8);
         for (int[] rejected : bottomRightRejects) {
             assertFalse(bottomRightBounded.stream().anyMatch(bounded -> Arrays.equals(bounded, rejected)));

@@ -10,7 +10,7 @@ public class StoneMap {
     private Intersection wagered;
     private PlayerModel currentPlayer;
 
-    public static final int[][] OFFSETS_ARRAY = {{-1,-1},{0,-1},{1,-1},{0,-1},{0,1}, {1,-1},{1,0},{1,1}};
+    public static final int[][] OFFSETS_ARRAY = {{0,-1},{0,1},{-1,0},{1,0}};
     public static final Set<int[]> STANDARD_OFFSETS = new HashSet<int[]>(Arrays.asList(OFFSETS_ARRAY));
 
     StoneMap(int xSize, int ySize){
