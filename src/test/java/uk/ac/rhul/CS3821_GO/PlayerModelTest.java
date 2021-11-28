@@ -72,8 +72,8 @@ class PlayerModelTest {
         single.addStone(0, belongsToZero);
         single.addStone(1, oneOrZero);
         single.addStone(2, willSeeAll);
-        single.combineStrings(1,2);
-        single.combineStrings(0,1);
+        single.combineGroups(1,2);
+        single.combineGroups(0,1);
         assertEquals(0, single.getGroup(oneOrZero));
         assertEquals(0, single.getGroup(willSeeAll));
     }
