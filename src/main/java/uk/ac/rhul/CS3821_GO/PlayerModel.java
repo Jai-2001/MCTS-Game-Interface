@@ -24,11 +24,11 @@ public class PlayerModel {
         return strings.get(stone);
     }
 
-    public void addStone(int i, Intersection unique) {
-        strings.put(unique, i);
+    public void addStone(int i, Intersection stone) {
+        strings.put(stone, i);
     }
 
-    public void combineStrings(int parent, int child) {
+    public void combineGroups(int parent, int child) {
         strings.replaceAll((stone,group) -> group == child ? parent : group);
     }
 }
