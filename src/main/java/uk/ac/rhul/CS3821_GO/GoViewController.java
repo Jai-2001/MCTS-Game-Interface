@@ -11,8 +11,8 @@ public class GoViewController {
         } while (game.updateBoardState());
     }
 
-    private final GoModel model;
-    private final GoASCIIView view;
+    private GoModel model;
+    private GoASCIIView view;
 
     public GoViewController(){
         this(new GoModel(), new GoASCIIView());
@@ -33,8 +33,8 @@ public class GoViewController {
 
     public void inputMove(Scanner inputBuffer) {
         this.view.printBoard(getIntBoard());
-        int moveX;
-        int moveY;
+        int moveX = -1;
+        int moveY = -1;
         String playerName = "Black";
         if (this.model.getCurrentTurn().getCurrentPlayer() == TurnState.PLAYER_WHITE){
             playerName = "White";

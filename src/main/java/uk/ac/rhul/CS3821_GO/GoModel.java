@@ -5,13 +5,15 @@ public class GoModel {
     final static int BOARD_SIZE_X = 9;
     final static int BOARD_SIZE_Y = 9;
 
-    private final TurnState currentPlayerTurn;
-    private final StoneMap board;
+    private TurnState currentPlayerTurn;
+    private StoneMap board;
+    private int[] attemptedMove;
     boolean moveWasValid;
 
     GoModel(){
         this.currentPlayerTurn = new TurnState();
         this.board = new StoneMap(BOARD_SIZE_X, BOARD_SIZE_Y);
+        attemptedMove = new int[2];
         moveWasValid = false;
     }
 
@@ -20,6 +22,8 @@ public class GoModel {
     }
 
     public void nextTurn() {
+        Intersection relevant = this.board.getStone(attemptedMove[0],attemptedMove[1]);
+        PlayerModel currentPlayer = this.currentPlayerTurn.getCurrentPlayer();
         if (moveWasValid){
             this.board.confirmMove();
             this.currentPlayerTurn.changePlayer();
@@ -32,6 +36,8 @@ public class GoModel {
     }
 
     public boolean tryMove(int xPos, int yPos){
+        attemptedMove[0] = xPos;
+        attemptedMove[1] = yPos;
             if (this.board.checkMove(xPos, yPos, currentPlayerTurn.getCurrentPlayer())){
                 this.moveWasValid = true;
                 return true;
