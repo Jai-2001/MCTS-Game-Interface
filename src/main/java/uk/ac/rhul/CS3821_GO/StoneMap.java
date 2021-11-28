@@ -11,7 +11,7 @@ public class StoneMap {
     private PlayerModel currentPlayer;
 
     public static final int[][] OFFSETS_ARRAY = {{0,-1},{0,1},{-1,0},{1,0}};
-    public static final Set<int[]> STANDARD_OFFSETS = new HashSet<>(Arrays.asList(OFFSETS_ARRAY));
+    public static final Set<int[]> STANDARD_OFFSETS = new HashSet<int[]>(Arrays.asList(OFFSETS_ARRAY));
 
     StoneMap(int xSize, int ySize){
         this.grid = new Intersection[xSize][ySize];
@@ -53,6 +53,10 @@ public class StoneMap {
         } else{
             this.wagered.setBlack();
         }
+    }
+
+    public Intersection getStone(int xPos, int yPos){
+        return this.grid[xPos][yPos];
     }
 
     public Intersection[][] copy(){
