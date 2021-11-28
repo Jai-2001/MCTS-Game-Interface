@@ -45,4 +45,17 @@ class PlayerModelTest {
         assertEquals(0, single.getKey(unique),
                 "Player instance should be able to identify the stones that it's placed.");
     }
+
+    @Test
+    void testDifferentStones(){
+        PlayerModel single = new PlayerModel(StoneTypes.BLACK);
+        Intersection belongsToZero = new Intersection();
+        Intersection belongsToOne = new Intersection();
+        single.addStone(0, belongsToZero);
+        single.addStone(1, belongsToOne);
+        assertEquals(0, single.getKey(belongsToZero),
+                "Should be able to identify corresponding string for owned stones.");
+        assertEquals(1, single.getKey(belongsToOne),
+                "Should be able to differentiate between strings");
+    }
 }
