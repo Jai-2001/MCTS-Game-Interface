@@ -17,9 +17,13 @@ public class PlayerModel {
         return this.type;
     }
 
-    public void getKey(Intersection stone) {
+    public int getKey(Intersection stone) {
         if (!strings.containsValue(stone)){
             throw new IllegalArgumentException("This stone does not belong to this player.");
         }
+        return 0;
+    }
+
+    public void addStone(int i, Intersection unique) {
     }
 }
