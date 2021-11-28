@@ -5,26 +5,26 @@ import java.util.Map;
 
 public class PlayerModel {
     private StoneTypes type;
-    private Map<Integer, Intersection> strings;
+    private Map<Intersection, Integer> strings;
     PlayerModel(StoneTypes type){
         if(type == StoneTypes.NONE){
             throw new IllegalArgumentException("Player must either use white or black stones.");
         }
         this.type = type;
-        this.strings = new HashMap<Integer,Intersection>();
+        this.strings = new HashMap<Intersection, Integer>();
     }
     public StoneTypes getType(){
         return this.type;
     }
 
-    public int getKey(Intersection stone) {
-        if (!strings.containsValue(stone)){
+    public int getGroup(Intersection stone) {
+        if (!strings.containsKey(stone)){
             throw new IllegalArgumentException("This stone does not belong to this player.");
         }
-        return 0;
+        return strings.get(stone);
     }
 
     public void addStone(int i, Intersection unique) {
-        strings.put(i, unique);
+        strings.put(unique, i);
     }
 }
