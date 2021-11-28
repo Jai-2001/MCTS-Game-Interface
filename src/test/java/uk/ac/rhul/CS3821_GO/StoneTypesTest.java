@@ -18,16 +18,16 @@ class StoneTypesTest {
 
     @Test
     void testPlacedStones(){
-        boolean containsWhite = Arrays.stream(StoneTypes.values()).anyMatch(StoneTypes.WHITE::equals);
+        boolean containsWhite = Arrays.asList(StoneTypes.values()).contains(StoneTypes.WHITE);
         assertTrue(containsWhite);
-        boolean containsBlack = Arrays.stream(StoneTypes.values()).anyMatch(StoneTypes.BLACK::equals);
+        boolean containsBlack = Arrays.asList(StoneTypes.values()).contains(StoneTypes.BLACK);
         assertTrue(containsBlack);
 
     }
 
     @Test
     void testNoStonePlaced(){
-        boolean containsNone = Arrays.stream(StoneTypes.values()).anyMatch(StoneTypes.NONE::equals);
+        boolean containsNone = Arrays.asList(StoneTypes.values()).contains(StoneTypes.NONE);
         assertTrue(containsNone);
     }
 }

@@ -9,12 +9,12 @@ class PlayerModelTest {
     void testValidInit() {
         assertDoesNotThrow(
                 () -> {
-                    PlayerModel playerWhite = new PlayerModel(StoneTypes.WHITE);
+                    new PlayerModel(StoneTypes.WHITE);
                 }
         );
         assertDoesNotThrow(
                 () -> {
-                    PlayerModel playerBlack = new PlayerModel(StoneTypes.BLACK);
+                    new PlayerModel(StoneTypes.BLACK);
                 }
         );
     }
@@ -22,9 +22,7 @@ class PlayerModelTest {
     @Test
     void testInvalidInit(){
         assertThrows(IllegalArgumentException.class,
-                () -> {
-                    PlayerModel playerNone = new PlayerModel(StoneTypes.NONE);
-                }
+                () -> new PlayerModel(StoneTypes.NONE)
         );
     }
 
