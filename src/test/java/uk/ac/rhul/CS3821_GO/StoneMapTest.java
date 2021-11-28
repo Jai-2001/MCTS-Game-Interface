@@ -38,13 +38,13 @@ class StoneMapTest {
 
     @Test
     void testGoMovesValidity() {
-        int[][] validMoves = {{1,1},{1,2},{1,3},{2,1},{3,1},{3,2},{3,3},{2,3}};//first 8 moves create string with a single liberty
-        int[] invalidMove = {2,2}; // last move fills single liberty, which is invalid
-        for (int i = 0; i < validMoves.length; i++) {
-            int[] prepMove = validMoves[i];
-            assertTrue(grid.checkMove(prepMove[0] - 1,prepMove[1] - 1,TurnState.PLAYER_BLACK));
+        int[][] validMoves = {{1,1},{1,2},{1,3},{2,1},{3,1},{3,2},{3,3},{2,3}};
+        for (int[] prepMove : validMoves) {
+            assertTrue(grid.checkMove(prepMove[0] - 1,prepMove[1] - 1,TurnState.PLAYER_BLACK),
+                    "first 8 moves create string with a single liberty");
             grid.confirmMove();
         }
-        assertFalse(grid.checkMove(invalidMove[0] - 1,invalidMove[1] - 1, TurnState.PLAYER_BLACK));
+        assertFalse(grid.checkMove(2,2, TurnState.PLAYER_BLACK),
+                "last move fills single liberty, which is invalid");
     }
 }
