@@ -25,5 +25,6 @@ public class PlayerModel {
     }
 
     public void addStone(int i, Intersection unique) {
+        strings.put(i, unique);
     }
 }
