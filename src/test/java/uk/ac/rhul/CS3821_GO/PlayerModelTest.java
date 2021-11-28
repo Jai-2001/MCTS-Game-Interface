@@ -39,13 +39,13 @@ class PlayerModelTest {
         );
     }
 
-    @Test
-    void testStringsKey(){
-        PlayerModel single = new PlayerModel(StoneTypes.BLACK);
-        Intersection unique = new Intersection();
-        unique.setBlack();
-        single.addStone(0, unique);
-        assertEquals(0, single.getKey(unique),
-                "Player instance should be able to identify the group one of it's Intersection object belongs to");
-    }
+//    @Test
+//    void testStringsKey(){
+//        PlayerModel single = new PlayerModel(StoneTypes.BLACK);
+//        Intersection unique = new Intersection();
+//        unique.setBlack();
+//        single.addStone(0, unique);
+//        assertEquals(0, single.getKey(unique),
+//                "Player instance should be able to identify the group one of it's Intersection object belongs to");
+//    }
 }
