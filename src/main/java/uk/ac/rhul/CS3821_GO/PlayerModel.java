@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerModel {
-    private StoneTypes type;
-    private Map<Intersection, Integer> strings;
+    private final StoneTypes type;
+    private final Map<Intersection, Integer> strings;
     PlayerModel(StoneTypes type){
         if(type == StoneTypes.NONE){
             throw new IllegalArgumentException("Player must either use white or black stones.");
         }
         this.type = type;
-        this.strings = new HashMap<Intersection, Integer>();
+        this.strings = new HashMap<>();
     }
     public StoneTypes getType(){
         return this.type;
@@ -26,5 +26,9 @@ public class PlayerModel {
 
     public void addStone(int i, Intersection unique) {
         strings.put(unique, i);
+    }
+
+    public void combineStrings(int parent, int child) {
+        strings.replaceAll((stone,group) -> group == child ? parent : group);
     }
 }
