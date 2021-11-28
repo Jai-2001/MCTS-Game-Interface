@@ -47,4 +47,15 @@ class StoneMapTest {
         assertFalse(grid.checkMove(2,2, TurnState.PLAYER_BLACK),
                 "last move fills single liberty, which is invalid");
     }
+
+    @Test
+    void testCapturingMove(){
+        int[][] deadString = {{1,1},{1,2},{1,3},{2,1},{3,1},{3,2},{3,3},{2,3}};
+        for (int[] blackMove : deadString) {
+            grid.checkMove(blackMove[0], blackMove[1], TurnState.PLAYER_BLACK);
+            grid.confirmMove();
+        }
+        assertTrue(grid.checkMove(2,2 , TurnState.PLAYER_WHITE),
+                "White should be able to place with no liberties, these pieces will be captured.");
+    }
 }
