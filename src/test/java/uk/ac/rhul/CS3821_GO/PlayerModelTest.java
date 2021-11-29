@@ -77,4 +77,25 @@ class PlayerModelTest {
         assertEquals(0, single.getGroup(oneOrZero));
         assertEquals(0, single.getGroup(willSeeAll));
     }
+
+    @Test
+    void testClearString(){
+        Intersection belongsToZero = new Intersection();
+        Intersection oneForRemoval = new Intersection();
+        Intersection oneAlsoRemoval = new Intersection();
+        single.addStone(0, belongsToZero);
+        single.addStone(1, oneForRemoval);
+        single.addStone(1, oneAlsoRemoval);
+        single.clearGroup(1);
+        assertThrows(IllegalArgumentException.class,
+                () ->{
+                    single.getGroup(oneForRemoval);
+                }
+        );
+        assertThrows(IllegalArgumentException.class,
+                () ->{
+                    single.getGroup(oneAlsoRemoval);
+                }
+        );
+    }
 }
