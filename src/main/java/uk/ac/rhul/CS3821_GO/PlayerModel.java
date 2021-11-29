@@ -31,4 +31,8 @@ public class PlayerModel {
     public void combineGroups(int parent, int child) {
         strings.replaceAll((stone,group) -> group == child ? parent : group);
     }
+
+    public void clearGroup(int group) {
+        while(strings.values().remove(group));
+    }
 }
