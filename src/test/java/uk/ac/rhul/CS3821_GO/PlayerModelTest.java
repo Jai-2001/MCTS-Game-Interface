@@ -98,4 +98,17 @@ class PlayerModelTest {
                 }
         );
     }
+
+    @Test
+    void testBoardImpact(){
+        Intersection one = new Intersection();
+        Intersection two = new Intersection();
+        one.setBlack();
+        two.setBlack();
+        single.addStone(0, one);
+        single.addStone(0, two);
+        single.clearGroup(0);
+        assertTrue(one.isCleared());
+        assertTrue(two.isCleared());
+    }
 }
