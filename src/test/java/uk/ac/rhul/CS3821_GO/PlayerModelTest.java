@@ -2,6 +2,9 @@ package uk.ac.rhul.CS3821_GO;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerModelTest {
@@ -111,4 +114,20 @@ class PlayerModelTest {
         assertTrue(one.isCleared());
         assertTrue(two.isCleared());
     }
+
+    @Test
+    void testGetGroupStones(){
+        Intersection zero = new Intersection();
+        Intersection one = new Intersection();
+        Intersection alsoOne = new Intersection();
+        single.addStone(0, zero);
+        single.addStone(1, one);
+        single.addStone(1, alsoOne);
+        List<Intersection> apparentGroup = single.getGroupStones(1);
+        assertEquals(2, apparentGroup.size());
+        for (Intersection returned : apparentGroup){
+            assertEquals(1,single.getGroup(returned));
+        }
+    }
+
 }
