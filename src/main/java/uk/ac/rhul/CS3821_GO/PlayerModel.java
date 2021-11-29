@@ -1,8 +1,8 @@
 package uk.ac.rhul.CS3821_GO;
 import java.lang.IllegalArgumentException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 public class PlayerModel {
     private final StoneTypes type;
@@ -34,19 +34,16 @@ public class PlayerModel {
         strings.replaceAll((stone,group) -> group == child ? parent : group);
     }
 
-    private Optional<Map.Entry<Intersection, Integer>> optionalFromGroup (int query){
-        return strings.entrySet().stream().filter((entry) -> entry.getValue() == query).findAny();
-    }
-
-
     public void clearGroup(int toClear) {
-        Optional<Map.Entry<Intersection, Integer>> stoneEntry = optionalFromGroup(toClear);
-        while (stoneEntry.isPresent()){
-            Map.Entry<Intersection, Integer> presentEntry = stoneEntry.get();
-            Intersection key = presentEntry.getKey();
-            key.clear();
-            strings.remove(key, presentEntry.getValue());
-            stoneEntry = optionalFromGroup(toClear);
-        }
+        Iterator<Map.Entry<Intersection, Integer>> mutable = strings.entrySet().iterator();
+        mutable.forEachRemaining((Map.Entry<Intersection, Integer> entry) -> {
+                int group = entry.getValue();
+                    if (group == toClear){
+                        entry.getKey().clear();
+                        mutable.remove();
+                    }
+            }
+        );
     }
+
 }
