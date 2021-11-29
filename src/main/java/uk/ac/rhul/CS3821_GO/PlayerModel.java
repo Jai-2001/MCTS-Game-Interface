@@ -1,7 +1,9 @@
 package uk.ac.rhul.CS3821_GO;
 import java.lang.IllegalArgumentException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerModel {
@@ -46,4 +48,7 @@ public class PlayerModel {
         );
     }
 
+    public List<Intersection> getGroupStones(int i) {
+        return new ArrayList<Intersection>();
+    }
 }
