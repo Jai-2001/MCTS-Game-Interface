@@ -54,7 +54,8 @@ public class PlayerModel {
         stones.remove(i);
     }
 
-    public List<Intersection> getGroupStones(int i) {
-        return new LinkedList<>();
+    public Intersection[] getGroupStones(int i) {
+        Set<Intersection> groupSet = stones.get(i);
+        return groupSet.toArray(new Intersection[0]);
     }
 }

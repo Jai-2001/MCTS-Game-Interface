@@ -123,8 +123,8 @@ class PlayerModelTest {
         single.addStone(0, zero);
         single.addStone(1, one);
         single.addStone(1, alsoOne);
-        List<Intersection> apparentGroup = single.getGroupStones(1);
-        assertEquals(2, apparentGroup.size());
+        Intersection[] apparentGroup = single.getGroupStones(1);
+        assertEquals(2, apparentGroup.length);
         for (Intersection returned : apparentGroup){
             assertEquals(1,single.getGroup(returned));
         }
