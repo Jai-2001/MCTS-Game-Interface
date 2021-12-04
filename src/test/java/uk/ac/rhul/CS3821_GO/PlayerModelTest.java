@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -130,4 +131,17 @@ class PlayerModelTest {
         }
     }
 
+    @Test
+    void testAssignLiberty(){
+        single.addStone(1, new Intersection());
+        single.addStone(0, new Intersection());
+        single.addLiberty(0, new Intersection());
+        Intersection traceable = new Intersection();
+        Intersection alsoTraceable = new Intersection();
+        Set<Intersection> onesLiberties = single.getLiberties(1);
+        assertEquals(2, onesLiberties.size());
+        assertTrue(onesLiberties.contains(traceable));
+        assertTrue(onesLiberties.contains(alsoTraceable));
+
+    }
 }

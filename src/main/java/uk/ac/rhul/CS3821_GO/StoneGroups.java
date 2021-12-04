@@ -52,4 +52,11 @@ public class StoneGroups {
         Set<Intersection> groupSet = stones.get(i);
         return groupSet.toArray(new Intersection[0]);
     }
+
+    public void addLiberty(int i, Intersection intersection) {
+    }
+
+    public Set<Intersection> getLiberties(int i) {
+        return new HashSet<>();
+    }
 }
