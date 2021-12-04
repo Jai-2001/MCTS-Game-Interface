@@ -1,5 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -7,9 +8,12 @@ import java.util.Set;
 public class StoneGroups {
     Map<Integer, Set<Intersection>> stones;
     Map<Intersection, Integer> stonesInverse;
+    Map<Integer, Set<Intersection>> liberties;
 
     public StoneGroups() {
-
+        this.stones = new HashMap<>();
+        this.stonesInverse = new HashMap<>();
+        this.liberties = new HashMap<>();
     }
 
     public int getGroup(Intersection query) {
@@ -54,9 +58,17 @@ public class StoneGroups {
     }
 
     public void addLiberty(int i, Intersection intersection) {
+        Set<Intersection> eyes;
+        if(liberties.containsKey(i)){
+            eyes = this.liberties.get(i);
+        } else {
+            eyes = new HashSet<>();
+            liberties.put(i, eyes);
+        }
+        eyes.add(intersection);
     }
 
     public Set<Intersection> getLiberties(int i) {
-        return new HashSet<>();
+        return this.liberties.get(i);
     }
 }

@@ -3,16 +3,15 @@ import java.lang.IllegalArgumentException;
 import java.util.*;
 
 public class PlayerModel {
-    private final StoneTypes type;
-    private final StoneGroups stoneGroups = new StoneGroups();
+    private StoneTypes type;
+    private StoneGroups stoneGroups;
 
     PlayerModel(StoneTypes type){
         if(type == StoneTypes.NONE){
             throw new IllegalArgumentException("Player must either use white or black stones.");
         }
         this.type = type;
-        this.stoneGroups.stones = new HashMap<>();
-        this.stoneGroups.stonesInverse = new HashMap<>();
+        this.stoneGroups = new StoneGroups();
     }
     public StoneTypes getType(){
         return this.type;
