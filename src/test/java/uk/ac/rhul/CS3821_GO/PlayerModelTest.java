@@ -138,6 +138,8 @@ class PlayerModelTest {
         single.addLiberty(0, new Intersection());
         Intersection traceable = new Intersection();
         Intersection alsoTraceable = new Intersection();
+        single.addLiberty(1, traceable);
+        single.addLiberty(1,alsoTraceable);
         Set<Intersection> onesLiberties = single.getLiberties(1);
         assertEquals(2, onesLiberties.size());
         assertTrue(onesLiberties.contains(traceable));
