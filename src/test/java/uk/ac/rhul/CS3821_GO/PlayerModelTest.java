@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerModelTest {
 
-    PlayerModel single;
+    StoneGroups single;
 
     @BeforeEach
     void setUp() {
-        single = new PlayerModel(StoneTypes.BLACK);
+        single = new PlayerModel(StoneTypes.BLACK).getGroup();
     }
 
     @Test

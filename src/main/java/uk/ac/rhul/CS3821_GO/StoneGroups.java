@@ -1,0 +1,55 @@
+package uk.ac.rhul.CS3821_GO;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class StoneGroups {
+    Map<Integer, Set<Intersection>> stones;
+    Map<Intersection, Integer> stonesInverse;
+
+    public StoneGroups() {
+
+    }
+
+    public int getGroup(Intersection query) {
+        if (!stonesInverse.containsKey(query)) {
+            throw new IllegalArgumentException("This stone does not belong to this player.");
+        }
+        return stonesInverse.get(query);
+    }
+
+    public void addStone(int i, Intersection stone) {
+        Set<Intersection> groupSet;
+        if (!stones.containsKey(i)) {
+            groupSet = new HashSet<>();
+            stones.put(i, groupSet);
+        } else {
+            groupSet = stones.get(i);
+        }
+        groupSet.add(stone);
+        stonesInverse.putIfAbsent(stone, i);
+    }
+
+    public void combineGroups(int parent, int child) {
+        Set<Intersection> parentSet = stones.get(parent);
+        Set<Intersection> childSet = stones.get(child);
+        parentSet.addAll(childSet);
+        stonesInverse.replaceAll((stone, group) -> group == child ? parent : group);
+    }
+
+    public void clearGroup(int i) {
+        Set<Intersection> clearSet = stones.remove(i);
+        for (Intersection toRemove : clearSet) {
+            toRemove.clear();
+            ;
+            stonesInverse.remove(toRemove);
+        }
+        stones.remove(i);
+    }
+
+    public Intersection[] getGroupStones(int i) {
+        Set<Intersection> groupSet = stones.get(i);
+        return groupSet.toArray(new Intersection[0]);
+    }
+}

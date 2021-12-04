@@ -4,58 +4,22 @@ import java.util.*;
 
 public class PlayerModel {
     private final StoneTypes type;
-    private Map<Integer, Set<Intersection>> stones;
-    private Map<Intersection, Integer> stonesInverse;
+    private final StoneGroups stoneGroups = new StoneGroups();
 
     PlayerModel(StoneTypes type){
         if(type == StoneTypes.NONE){
             throw new IllegalArgumentException("Player must either use white or black stones.");
         }
         this.type = type;
-        this.stones = new HashMap<>();
-        this.stonesInverse = new HashMap<>();
+        this.stoneGroups.stones = new HashMap<>();
+        this.stoneGroups.stonesInverse = new HashMap<>();
     }
     public StoneTypes getType(){
         return this.type;
     }
 
-    public int getGroup(Intersection query) {
-        if (!stonesInverse.containsKey(query)){
-            throw new IllegalArgumentException("This stone does not belong to this player.");
-        }
-        return stonesInverse.get(query);
+    public StoneGroups getGroup() {
+        return this.stoneGroups;
     }
 
-    public void addStone(int i, Intersection stone) {
-        Set<Intersection> groupSet;
-            if(!stones.containsKey(i)){
-                groupSet = new HashSet<>();
-                stones.put(i, groupSet);
-            } else{
-                groupSet = stones.get(i);
-            }
-        groupSet.add(stone);
-        stonesInverse.putIfAbsent(stone, i);
-    }
-
-    public void combineGroups(int parent, int child) {
-        Set<Intersection> parentSet = stones.get(parent);
-        Set<Intersection> childSet = stones.get(child);
-        parentSet.addAll(childSet);
-        stonesInverse.replaceAll((stone, group)-> group == child ? parent : group);
-    }
-
-    public void clearGroup(int i) {
-        Set<Intersection> clearSet = stones.remove(i);
-            for (Intersection toRemove: clearSet) {
-                toRemove.clear();;
-                stonesInverse.remove(toRemove);
-            }
-        stones.remove(i);
-    }
-
-    public Intersection[] getGroupStones(int i) {
-        Set<Intersection> groupSet = stones.get(i);
-        return groupSet.toArray(new Intersection[0]);
-    }
 }
