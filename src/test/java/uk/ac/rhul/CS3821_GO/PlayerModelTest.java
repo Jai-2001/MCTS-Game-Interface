@@ -151,7 +151,7 @@ class PlayerModelTest {
         single.addStone(0, new Intersection());
         single.addStone(1, new Intersection());
         single.combineGroups(0,1);
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
                 single.getGroupStones(1);
             }
         );
