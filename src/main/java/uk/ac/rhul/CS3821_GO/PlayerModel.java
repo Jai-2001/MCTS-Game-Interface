@@ -17,7 +17,7 @@ public class PlayerModel {
         return this.type;
     }
 
-    public StoneGroups getGroup() {
+    public StoneGroups getGroups() {
         return this.stoneGroups;
     }
 
