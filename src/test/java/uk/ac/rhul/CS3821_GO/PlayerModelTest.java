@@ -3,7 +3,6 @@ package uk.ac.rhul.CS3821_GO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +13,7 @@ class PlayerModelTest {
 
     @BeforeEach
     void setUp() {
-        single = new PlayerModel(StoneTypes.BLACK).getGroup();
+        single = new PlayerModel(StoneTypes.BLACK).getGroups();
     }
 
     @Test
@@ -145,5 +144,16 @@ class PlayerModelTest {
         assertTrue(onesLiberties.contains(traceable));
         assertTrue(onesLiberties.contains(alsoTraceable));
 
+    }
+
+    @Test
+    void testCombineRemoves(){
+        single.addStone(0, new Intersection());
+        single.addStone(1, new Intersection());
+        single.combineGroups(0,1);
+        assertThrows(IllegalArgumentException.class, () -> {
+                single.getGroupStones(1);
+            }
+        );
     }
 }
