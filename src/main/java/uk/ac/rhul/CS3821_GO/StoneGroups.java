@@ -40,6 +40,7 @@ public class StoneGroups {
         Set<Intersection> childSet = stones.get(child);
         parentSet.addAll(childSet);
         stonesInverse.replaceAll((stone, group) -> group == child ? parent : group);
+        stones.remove(child);
     }
 
     public void clearGroup(int i) {
