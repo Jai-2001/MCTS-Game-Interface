@@ -6,8 +6,9 @@ public class GoViewController {
 
     public static void main(String[] args) {
         GoViewController game = new GoViewController();
+        Scanner inputBuffer = new Scanner(System.in);
         do{
-            game.inputMove(new Scanner(System.in));
+            game.inputMove(inputBuffer);
         } while (game.updateBoardState());
     }
 

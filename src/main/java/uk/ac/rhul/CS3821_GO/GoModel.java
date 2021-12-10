@@ -36,12 +36,10 @@ public class GoModel {
     }
 
     public boolean tryMove(int xPos, int yPos){
-        attemptedMove[0] = xPos;
-        attemptedMove[1] = yPos;
-            if (this.board.checkMove(xPos, yPos, currentPlayerTurn.getCurrentPlayer())){
-                this.moveWasValid = true;
-                return true;
-            }
+        if (this.board.checkMove(xPos, yPos, currentPlayerTurn)){
+            this.moveWasValid = true;
+            return true;
+        }
         this.moveWasValid = false;
         return false;
     }
