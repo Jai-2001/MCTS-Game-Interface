@@ -8,8 +8,6 @@ public class StoneMap {
 
     private final Intersection[][] grid;
     private Intersection wagered;
-    private PlayerModel currentPlayer;
-
     public static final int[][] OFFSETS_ARRAY = {{0,-1},{0,1},{-1,0},{1,0}};
     public static final Set<int[]> STANDARD_OFFSETS = new HashSet<>(Arrays.asList(OFFSETS_ARRAY));
 
@@ -17,14 +15,13 @@ public class StoneMap {
         this.grid = new Intersection[xSize][ySize];
         for (int x = 0; x < xSize; x++) {
             for (int y = 0; y < ySize; y++) {
-                this.grid[x][y] = new Intersection();
+                this.grid[x][y] = new Intersection(x,y);
             }
         }
         this.wagered = null;
-        this.currentPlayer = null;
     }
 
-    static Set<int[]> prepareOffsets(int xPos, int yPos){
+   public static Set<int[]> prepareOffsets(int xPos, int yPos){
         Set<int[]> boundedOffsets = new HashSet<>();
         for (int[] offset: STANDARD_OFFSETS) {
             int newX = xPos + offset[0];
@@ -36,24 +33,50 @@ public class StoneMap {
         return boundedOffsets;
     }
 
-    public boolean checkMove(int xPos, int yPos, PlayerModel currentPlayer) {
+    public boolean checkMove(int xPos, int yPos, TurnState turn) {
         this.wagered = this.grid[xPos][yPos];
-        this.currentPlayer = currentPlayer;
         Set<int[]>currentOffsets = prepareOffsets(xPos, yPos);
         boolean hasLiberty = false;
         for (int[] offset : currentOffsets) {
             hasLiberty |= this.grid[xPos + offset[0]][yPos + offset[1]].isCleared();
         }
-        return hasLiberty && this.wagered.isCleared();
+        boolean captureOccurred = checkCapture(xPos,yPos, turn);
+        return (hasLiberty || captureOccurred) && this.wagered.isCleared();
     }
 
-    public void confirmMove(){
-        if(currentPlayer == TurnState.PLAYER_WHITE){
-            this.wagered.setWhite();
-        } else{
-            this.wagered.setBlack();
+    public boolean checkCapture(int xPos, int yPos, TurnState turn){
+        StoneGroups friendly = turn.getCurrentPlayer().getGroups();
+        StoneGroups hostile = turn.getPreviousPlayer().getGroups();
+        int playerIndex = turn.getCurrentPlayer().getType().ordinal();
+        Intersection relevant = this.grid[xPos][yPos];
+        for(int[] offset : prepareOffsets(xPos, yPos)){
+            Intersection adjacent = this.grid[xPos + offset[0]][yPos + offset[1]];
+            if(!adjacent.isCleared()){
+                if(adjacent.getRepresentation() == playerIndex){
+                    int neighbour = friendly.getGroup(adjacent);
+                    Set<Intersection> neighbourGroup = friendly.getLiberties(neighbour);
+                    if(neighbourGroup != null) {
+                        if (friendly.getLiberties(neighbour).size() > 1) {
+                            return true;
+                        }
+                    }
+                } else{
+                    int enemy = hostile.getGroup(adjacent);
+                    Set<Intersection> eyes = hostile.getLiberties(enemy);
+                    if(eyes != null)  {
+                        if (eyes.size() == 1) {
+                            Intersection last = eyes.iterator().next();
+                            if(relevant.equals(last)){
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
         }
+        return false;
     }
+
 
     public Intersection getStone(int xPos, int yPos){
         return this.grid[xPos][yPos];
@@ -61,5 +84,9 @@ public class StoneMap {
 
     public Intersection[][] copy(){
         return grid;
+    }
+
+    public Intersection getWagered() {
+        return wagered;
     }
 }
