@@ -57,10 +57,22 @@ class StoneMapTest {
     void testCapturingMove(){
         int[][] moveSequence = {{3,1},{2,1},{2,2},{1,2},{1,3},{8,8}};
         for (int[] move : moveSequence) {
-            assertTrue(parent.tryMove(move[0]- 1, move[1]-1));
+            assertTrue(parent.tryMove(move[0]- 1, move[1]-1),
+                    "Creates string with one free eye.");
             parent.nextTurn();
         }
         assertTrue(parent.tryMove(0,0),
                 "Black should be able to place with no liberties, these pieces will be captured.");
+    }
+
+    @Test
+    void testSelfCapture(){
+        int[][] moveSequence = {{3,1},{1,2},{3,2},{2,1},{2,2},{9,9},{2,3},{8,8},{1,3}};
+        for (int[] move : moveSequence) {
+            assertTrue(parent.tryMove(move[0]- 1, move[1]-1));
+            parent.nextTurn();
+        }
+        assertTrue(parent.tryMove(0,0),
+                "Black only has the one eye, self capture should be allowed.");
     }
 }
