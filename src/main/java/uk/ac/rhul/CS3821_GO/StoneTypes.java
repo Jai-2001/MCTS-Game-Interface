@@ -1,6 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 public enum StoneTypes {
-    WHITE,
+    NONE,
     BLACK,
-    NONE;
+    WHITE
 }
