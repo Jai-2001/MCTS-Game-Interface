@@ -35,20 +35,26 @@ public class StoneGroups {
         stonesInverse.putIfAbsent(stone, i);
     }
 
-    public void combineGroups(int parent, int child) {
+    public void combineGroups(int parent, int child){
         Set<Intersection> parentSet = stones.get(parent);
         Set<Intersection> childSet = stones.get(child);
         parentSet.addAll(childSet);
         stonesInverse.replaceAll((stone, group) -> group == child ? parent : group);
         stones.remove(child);
+        if(liberties.containsKey(parent) && liberties.containsKey(child)){
+            liberties.get(parent).addAll(liberties.get(child));
+            liberties.get(child).clear();
+        }
     }
 
     public void clearGroup(int i) {
         Set<Intersection> clearSet = stones.remove(i);
         for (Intersection toRemove : clearSet) {
             toRemove.clear();
-            ;
             stonesInverse.remove(toRemove);
+        }
+        if(liberties.containsKey(i)){
+            liberties.get(i).clear();
         }
         stones.remove(i);
     }
@@ -71,5 +77,15 @@ public class StoneGroups {
 
     public Set<Intersection> getLiberties(int i) {
         return this.liberties.get(i);
+    }
+
+    public void clearLiberties(){
+        for (int forStone: liberties.keySet()) {
+            liberties.get(forStone).clear();
+        }
+    }
+
+    public Set<Integer> getAllGroups(){
+        return stones.keySet();
     }
 }
