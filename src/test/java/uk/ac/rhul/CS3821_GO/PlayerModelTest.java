@@ -1,5 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,11 @@ class PlayerModelTest {
     @BeforeEach
     void setUp() {
         single = new PlayerModel(StoneTypes.BLACK).getGroups();
+    }
+
+    @AfterEach
+    void tearDown(){
+        single = null;
     }
 
     @Test

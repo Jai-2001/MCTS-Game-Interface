@@ -1,5 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +14,10 @@ class GoModelTest {
         model = new GoModel();
     }
 
+    @AfterEach
+    void tearDown(){
+        model = null;
+    }
     @Test
     void testInit(){
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();

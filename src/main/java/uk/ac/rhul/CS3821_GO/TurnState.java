@@ -3,8 +3,8 @@ package uk.ac.rhul.CS3821_GO;
 public class TurnState {
     private PlayerModel current;
     private PlayerModel previous;
-    final static PlayerModel PLAYER_BLACK = new PlayerModel(StoneTypes.BLACK);
-    final static PlayerModel PLAYER_WHITE = new PlayerModel(StoneTypes.WHITE);
+    static PlayerModel PLAYER_BLACK = new PlayerModel(StoneTypes.BLACK);
+    static PlayerModel PLAYER_WHITE = new PlayerModel(StoneTypes.WHITE);
 
     TurnState(){
         this.current = PLAYER_BLACK;
@@ -26,5 +26,10 @@ public class TurnState {
                 this.current = PLAYER_WHITE;
                 this.previous = PLAYER_BLACK;
             }
+    }
+
+    public static void flush(){
+        PLAYER_BLACK = new PlayerModel(StoneTypes.BLACK);
+        PLAYER_WHITE = new PlayerModel(StoneTypes.WHITE);
     }
 }

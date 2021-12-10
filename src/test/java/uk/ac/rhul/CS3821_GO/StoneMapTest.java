@@ -13,18 +13,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class StoneMapTest {
 
     GoModel parent;
-    StoneMap grid;
-    TurnState turn;
 
-    @BeforeEach
-    void setUp() {
-        grid = new StoneMap(GoModel.BOARD_SIZE_X, GoModel.BOARD_SIZE_Y);
-        turn = new TurnState();
-        parent = new GoModel(grid, turn);
+    @BeforeEach()
+    void setUp(){
+        TurnState.flush();
+        parent = new GoModel();
+
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown(){
+        parent = null;
+        TurnState.flush();
     }
 
     @Test
@@ -42,16 +42,14 @@ class StoneMapTest {
     }
 
     @Test
-    void testGoMovesValidity() {
-        int[][] validMoves = {{1,1},{2,1},{9,9},{2,2},{9,8},{1,3}};
-        for (int i = 0; i < validMoves.length; i++) {
-            int[] prepMove = validMoves[i];
-            assertTrue(parent.tryMove(prepMove[0] - 1,prepMove[1] - 1),
-                    "first 8 moves create string with a single liberty");
+    void testGoMovesValidity(){
+        int[][] validMoves = {{1,1},{2,1},{9,9},{2,2},{9,8},{1,3},{7,7},{6,6}};
+        for (int[] prepMove : validMoves) {
+            assertTrue(parent.tryMove(prepMove[0] - 1, prepMove[1] - 1),
+                    "first moves create string with a single liberty");
             parent.nextTurn();
         }
-        int[] invalidMove = {1,2};
-        assertFalse(parent.tryMove(invalidMove[0] - 1,invalidMove[1] - 1),
+        assertFalse(parent.tryMove(0,1),
                 "last move fills single liberty, which is invalid");
     }
 

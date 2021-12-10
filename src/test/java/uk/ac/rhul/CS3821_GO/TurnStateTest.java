@@ -1,5 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,11 @@ class TurnStateTest {
     @BeforeEach
     void setUp() {
          defaultStates = new TurnState();
+    }
+
+    @AfterEach
+    void tearDown(){
+        defaultStates = null;
     }
 
     @Test
