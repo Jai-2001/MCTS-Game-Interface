@@ -58,6 +58,8 @@ public class StoneMap {
                     if(neighbourGroup != null) {
                         if (friendly.getLiberties(neighbour).size() > 1) {
                             return true;
+                        } else if(friendly.getAllGroups().stream().allMatch(i -> friendly.getLiberties(i).size()<=1)){
+                            return true;
                         }
                     }
                 } else{
