@@ -13,11 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class StoneMapTest {
 
     GoModel parent;
+    TurnState turn;
 
     @BeforeEach()
     void setUp(){
         TurnState.flush();
-        parent = new GoModel();
+        turn = new TurnState();
+        parent = new GoModel(new StoneMap(9,9), turn);
 
     }
 
@@ -25,6 +27,7 @@ class StoneMapTest {
     void tearDown(){
         parent = null;
         TurnState.flush();
+        turn = null;
     }
 
     @Test
@@ -67,10 +70,14 @@ class StoneMapTest {
 
     @Test
     void testSelfCapture(){
-        int[][] moveSequence = {{3,1},{1,2},{3,2},{2,1},{2,2},{9,9},{2,3},{8,8},{1,3}};
+        int[][] moveSequence = {{3,1},{1,2},{3,2},{2,1},{2,2},{-1,-1},{2,3},{-1,-1},{1,3}};
         for (int[] move : moveSequence) {
-            assertTrue(parent.tryMove(move[0]- 1, move[1]-1));
-            parent.nextTurn();
+            if(move[0]==-1){
+                turn.changePlayer();
+            } else {
+                assertTrue(parent.tryMove(move[0] - 1, move[1] - 1));
+                parent.nextTurn();
+            }
         }
         assertTrue(parent.tryMove(0,0),
                 "Black only has the one eye, self capture should be allowed.");
