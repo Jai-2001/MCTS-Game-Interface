@@ -1,6 +1,5 @@
 package uk.ac.rhul.CS3821_GO;
 import java.lang.IllegalArgumentException;
-import java.util.*;
 
 public class PlayerModel {
     private StoneTypes type;
@@ -19,6 +18,14 @@ public class PlayerModel {
 
     public StoneGroups getGroups() {
         return this.stoneGroups;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof PlayerModel){
+            return this.getType() == ((PlayerModel) o).getType();
+        }
+        return false;
     }
 
 }
