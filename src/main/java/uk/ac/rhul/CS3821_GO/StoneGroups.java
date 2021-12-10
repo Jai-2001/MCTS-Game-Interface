@@ -55,6 +55,7 @@ public class StoneGroups {
         }
         if(liberties.containsKey(i)){
             liberties.get(i).clear();
+            liberties.remove(i);
         }
         stones.remove(i);
     }

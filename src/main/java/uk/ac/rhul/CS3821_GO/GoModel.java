@@ -86,7 +86,7 @@ public class GoModel {
                     }
                  }
             }
-            if(groups.getLiberties(index).size() == 0) {
+            if(groups.getLiberties(index) != null && groups.getLiberties(index).size() == 0) {
                toRemove.add(index);
             }
         }
