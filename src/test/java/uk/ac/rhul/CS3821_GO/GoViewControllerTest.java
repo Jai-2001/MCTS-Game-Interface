@@ -72,6 +72,15 @@ class GoViewControllerTest {
         assertEquals(2, resultBoard[1][2]);
         assertEquals(1, resultBoard[1][3]);
         assertEquals(2, resultBoard[2][1]);
+    }
+
+    @Test
+    void testPassMove(){
+        String inputIncludesPass = "2,2\r\np\r\n2,4\r\n2,2\r\n";
+        ByteArrayInputStream testInput = new ByteArrayInputStream(inputIncludesPass.getBytes());
+        System.setIn(testInput);
+        Scanner inputBuffer = new Scanner(System.in);
+        assertTrue(testModel.getBoard()[1][3].isBlack());
 
     }
 }
