@@ -90,7 +90,7 @@ class StoneMapTest {
             assertTrue(parent.tryMove(move[0] - 1, move[1] - 1));
             parent.nextTurn();
         }
-        assertTrue(parent.tryMove(2,1),
+        assertFalse(parent.tryMove(1,1),
                 "3,2 and 2,2 could repeat ad infinitum, so ko applies");
     }
 }
