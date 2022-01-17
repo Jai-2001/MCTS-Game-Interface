@@ -45,6 +45,9 @@ public class GoViewController {
                 if (response[0].equals("q")){
                     this.model.moveWasValid = false;
                     break;
+                } else if (response[0].equals("p")){
+                    this.model.moveWasValid = true;
+                    break;
                 }
             moveX = Integer.parseInt(response[0])-1;
             moveY = Integer.parseInt(response[1])-1;
