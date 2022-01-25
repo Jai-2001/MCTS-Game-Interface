@@ -107,11 +107,13 @@ class GoViewControllerTest {
         String includesPasses = "2,2\r\np\r\np\r\np\r\n";
         ByteArrayInputStream anotherTestInput = new ByteArrayInputStream(includesPasses.getBytes());
         System.setIn(anotherTestInput);
-        Scanner inputBuffer = new Scanner(System.in);
-        for (int i = 0; i < 2; i++) {
-            testController.inputMove(inputBuffer);
+        Scanner threeInputBuffer = new Scanner(System.in);
+        for (int i = 0; i < 3; i++) {
+            testController.inputMove(threeInputBuffer);
             testController.updateBoardState();
         }
+        testController.inputMove(threeInputBuffer);
+        testController.updateBoardState();
         assertTrue(testController.hasEnded());
     }
 
