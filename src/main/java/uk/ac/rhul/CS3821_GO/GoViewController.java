@@ -14,6 +14,8 @@ public class GoViewController {
 
     private GoModel model;
     private GoASCIIView view;
+    private boolean passedOnce;
+    private boolean hasEnded;
 
     public GoViewController(){
         this(new GoModel(), new GoASCIIView());
@@ -22,6 +24,8 @@ public class GoViewController {
     protected GoViewController(GoModel model, GoASCIIView view) {
         this.model = model;
         this.view = view;
+        this.passedOnce = false;
+        this.hasEnded = false;
     }
 
     public boolean updateBoardState() {
@@ -40,18 +44,25 @@ public class GoViewController {
         if (this.model.getCurrentTurn().getCurrentPlayer() == TurnState.PLAYER_WHITE){
             playerName = "White";
         }
-        do {
-            String[] response = this.view.promptInput(playerName, inputBuffer).split(",");
-                if (response[0].equals("q")){
-                    this.model.moveWasValid = false;
-                    break;
-                } else if (response[0].equals("p")){
-                    this.model.moveWasValid = true;
-                    break;
+         do {
+           String[] response = this.view.promptInput(playerName, inputBuffer).split(",");
+                switch (response[0].charAt(0)){
+                    case 'q':
+                        this.model.moveWasValid = false;
+                        continue;
+                    case 'p':
+                        this.hasEnded =  playerName.equals("White") && passedOnce;
+                        this.passedOnce = true;
+                        this.model.moveWasValid = true;
+                        continue;
+                    default:
+                        passedOnce = false;
+                        moveX = Integer.parseInt(response[0])-1;
+                        moveY = Integer.parseInt(response[1])-1;
+                        this.model.tryMove(moveX, moveY);
+                        break;
                 }
-            moveX = Integer.parseInt(response[0])-1;
-            moveY = Integer.parseInt(response[1])-1;
-        } while(!this.model.tryMove(moveX, moveY));
+            } while(!this.model.moveWasValid);
 
     }
 
@@ -67,6 +78,6 @@ public class GoViewController {
     }
 
     public boolean hasEnded() {
-        return false;
+        return this.hasEnded;
     }
 }
