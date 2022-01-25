@@ -65,4 +65,8 @@ public class GoViewController {
         }
         return currentBoard;
     }
+
+    public boolean hasEnded() {
+        return false;
+    }
 }
