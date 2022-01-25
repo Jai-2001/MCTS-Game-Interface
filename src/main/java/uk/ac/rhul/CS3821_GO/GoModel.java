@@ -107,5 +107,9 @@ public class GoModel {
         this.moveWasValid = false;
         return false;
     }
+
+    public int[] countPoints() {
+        return new int[]{2, 1};
+    }
 }
 

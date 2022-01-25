@@ -62,4 +62,17 @@ class GoModelTest {
         assertEquals(1,changedBoard[2][2].getRepresentation());
     }
 
+    @Test
+    void testPoints(){
+        model.tryMove(2,2);
+        model.nextTurn();
+        model.tryMove(4,4);
+        model.nextTurn();
+        model.tryMove(5,5);
+        model.nextTurn();
+        int[] results = model.countPoints();
+        assertEquals(2, results[0]);
+        assertEquals(1, results[1]);
+    }
+
 }
