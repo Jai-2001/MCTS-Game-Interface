@@ -45,7 +45,7 @@ public class GoViewController {
             playerName = "White";
         }
          do {
-           String[] response = this.view.promptInput(playerName, inputBuffer).split(",");
+            String[] response = this.view.promptInput(playerName, inputBuffer).split(",");
                 switch (response[0].charAt(0)){
                     case 'q':
                         this.model.moveWasValid = false;
@@ -62,7 +62,7 @@ public class GoViewController {
                         this.model.tryMove(moveX, moveY);
                         break;
                 }
-            } while(!this.model.moveWasValid);
+         } while(!this.model.moveWasValid);
 
     }
 
