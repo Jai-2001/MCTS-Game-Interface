@@ -19,9 +19,9 @@ public class GoModel {
 
     GoModel(StoneMap board, TurnState turn){
         this.currentPlayerTurn = turn;
-        moveWasValid = false;
+        this.moveWasValid = false;
         this.board = board;
-        lastGroup = -1;
+        this.lastGroup = -1;
     }
 
     public TurnState getCurrentTurn() {
@@ -91,7 +91,9 @@ public class GoModel {
             }
         }
         for (int i = 0; i < toRemove.size(); i++) {
-            groups.clearGroup(toRemove.get(i));
+            int groupIndex = toRemove.get(i);
+            player.incrementConcededPoints(groups.getGroupStones(groupIndex).length);
+            groups.clearGroup(groupIndex);
         }
     }
 
@@ -109,7 +111,7 @@ public class GoModel {
     }
 
     public int[] countPoints() {
-        return new int[]{2, 1};
+        return new int[]{TurnState.PLAYER_WHITE.getConcededPoints(), TurnState.PLAYER_BLACK.getConcededPoints()};
     }
 }
 
