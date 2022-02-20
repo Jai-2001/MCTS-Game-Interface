@@ -26,33 +26,31 @@ class GoViewControllerTest {
     @BeforeEach
     void setUp() {
         System.setOut(new PrintStream(testOutput));
+        textView = new GoASCIIView();
+        testModel = new GoModel();
+        testController = new GoViewController(testModel, textView);
     }
 
     @AfterEach
     void tearDown() {
         System.setOut(new PrintStream(authenticOutput));
         System.setIn(authenticInput);
+        TurnState.flush();
+        testModel = null;
     }
 
     @Test
     void testProcessMove(){
-        textView = new GoASCIIView();
-        testModel = new GoModel();
-        testController = new GoViewController(testModel, textView);
-        String arbitraryValidInput = "2,2\r\nq\r\n";
+        String arbitraryValidInput = "2,2\r\n3,3\r\nq\r\n";
         ByteArrayInputStream testInput = new ByteArrayInputStream(arbitraryValidInput.getBytes());
         System.setIn(testInput);
         Scanner inputBuffer = new Scanner(System.in);
         testController.inputMove(inputBuffer);
         testController.updateBoardState();
+        testController.inputMove(inputBuffer);
+        testController.updateBoardState();
         inputBuffer.close();
-        String anotherValidInput = "q\r\n";
-        ByteArrayInputStream anotherStream = new ByteArrayInputStream(anotherValidInput.getBytes());
-        System.setIn(anotherStream);
-        Scanner anotherInputBuffer = new Scanner(System.in);
-        testController.inputMove(anotherInputBuffer);
         String viewOutput = testOutput.toString().replace("\r","");
-        anotherInputBuffer.close();
         String[] lines = viewOutput.split("\n");
         int linePlacedOn = GoModel.BOARD_SIZE_Y + 2 + 1;
         assertEquals('B', lines[linePlacedOn].charAt(1));
@@ -65,16 +63,90 @@ class GoViewControllerTest {
         ByteArrayInputStream testInput = new ByteArrayInputStream(arbitraryValidInput.getBytes());
         System.setIn(testInput);
         Scanner inputBuffer = new Scanner(System.in);
-        textView = new GoASCIIView();
-        testModel = new GoModel();
-        testController = new GoViewController(testModel, textView);
+        for (int i = 0; i < 4; i++) {
+            testController.inputMove(inputBuffer);
+            testController.updateBoardState();
+        }
+        inputBuffer.close();
+        int[][] resultBoard = testController.getIntBoard();
+        assertEquals(1, resultBoard[1][1]);
+        assertEquals(2, resultBoard[1][2]);
+        assertEquals(1, resultBoard[1][3]);
+        assertEquals(2, resultBoard[2][1]);
+    }
+
+    @Test
+    void testPassMove(){
+        String inputIncludesPass = "2,2\r\np\r\n2,4\r\n2,2\r\n";
+        ByteArrayInputStream anotherTestInput = new ByteArrayInputStream(inputIncludesPass.getBytes());
+        System.setIn(anotherTestInput);
+        Scanner tooInputBuffer = new Scanner(System.in);
+        for (int i = 0; i < 3; i++) {
+            testController.inputMove(tooInputBuffer);
+            testController.updateBoardState();
+        }
+        tooInputBuffer.close();
+        assertTrue(testModel.getBoard()[1][3].isBlack());
+
+    }
+
+    @Test
+    void testConsequentPasses(){
+        String includesPasses = "2,2\r\np\r\np\r\n";
+        ByteArrayInputStream anotherTestInput = new ByteArrayInputStream(includesPasses.getBytes());
+        System.setIn(anotherTestInput);
+        Scanner inputBuffer = new Scanner(System.in);
         for (int i = 0; i < 2; i++) {
             testController.inputMove(inputBuffer);
             testController.updateBoardState();
-
+            assertFalse(testController.hasEnded());
         }
         inputBuffer.close();
-        String viewOutput = testOutput.toString().replace("\r","");
-
     }
+
+    @Test
+    void testGameEnd(){
+        String includesPasses = "2,2\r\np\r\np\r\np\r\n";
+        ByteArrayInputStream anotherTestInput = new ByteArrayInputStream(includesPasses.getBytes());
+        System.setIn(anotherTestInput);
+        Scanner threeInputBuffer = new Scanner(System.in);
+        for (int i = 0; i < 3; i++) {
+            testController.inputMove(threeInputBuffer);
+            testController.updateBoardState();
+        }
+        testController.inputMove(threeInputBuffer);
+        testController.updateBoardState();
+        assertTrue(testController.hasEnded());
+        threeInputBuffer.close();
+    }
+
+    @Test
+    void testScorePrint(){
+        String makesPoints = "1,3\r\n2,3\r\n2,2\r\n1,2\r\n2,4\r\n3,2\r\n3,3\r\n2,1\r\n3,1\r\n2,3\r\n4,2\r\n1,1\r\n2,2\r\np\r\n";
+        ByteArrayInputStream scoreInput = new ByteArrayInputStream(makesPoints.getBytes());
+        System.setIn(scoreInput);
+        Scanner scoreScanner = new Scanner(System.in);
+            for (int i = 0; i < 14; i++) {
+                testController.inputMove(scoreScanner);
+                testController.updateBoardState();
+            }
+        scoreScanner.close();
+        assertTrue(testOutput.toString().contains("Black:6, White:1"));
+    }
+
+    @Test
+    void testScorePrintAgain(){
+        String morePoints = "1,3\r\n2,3\r\n2,2\r\n1,2\r\n2,4\r\n3,2\r\n3,3\r\np\r\n";
+        ByteArrayInputStream scoreInputToo = new ByteArrayInputStream(morePoints.getBytes());
+        System.setIn(scoreInputToo);
+        Scanner scoreScannerToo = new Scanner(System.in);
+        for (int i = 0; i < 8; i++) {
+            testController.inputMove(scoreScannerToo);
+            testController.updateBoardState();
+        }
+        scoreScannerToo.close();
+        assertTrue(testOutput.toString().contains("Black:1, White:0"));
+    }
+
+
 }

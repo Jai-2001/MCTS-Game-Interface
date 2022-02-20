@@ -6,13 +6,16 @@ public class GoViewController {
 
     public static void main(String[] args) {
         GoViewController game = new GoViewController();
+        Scanner inputBuffer = new Scanner(System.in);
         do{
-            game.inputMove(new Scanner(System.in));
+            game.inputMove(inputBuffer);
         } while (game.updateBoardState());
     }
 
     private GoModel model;
     private GoASCIIView view;
+    private boolean passedOnce;
+    private boolean hasEnded;
 
     public GoViewController(){
         this(new GoModel(), new GoASCIIView());
@@ -21,6 +24,8 @@ public class GoViewController {
     protected GoViewController(GoModel model, GoASCIIView view) {
         this.model = model;
         this.view = view;
+        this.passedOnce = false;
+        this.hasEnded = false;
     }
 
     public boolean updateBoardState() {
@@ -39,15 +44,27 @@ public class GoViewController {
         if (this.model.getCurrentTurn().getCurrentPlayer() == TurnState.PLAYER_WHITE){
             playerName = "White";
         }
-        do {
-            String response[] = this.view.promptInput(playerName, inputBuffer).split(",");
-                if (response[0].equals("q")){
-                    this.model.moveWasValid = false;
-                    break;
+         do {
+            int[] intScores = this.model.countPoints();
+            String[] scores = {Integer.toString(intScores[0]), Integer.toString(intScores[1])};
+            String[] response = this.view.promptInput(playerName, scores, inputBuffer).split(",");
+                switch (response[0].charAt(0)){
+                    case 'q':
+                        this.model.moveWasValid = false;
+                        continue;
+                    case 'p':
+                        this.hasEnded =  playerName.equals("White") && passedOnce;
+                        this.passedOnce = true;
+                        this.model.moveWasValid = true;
+                        continue;
+                    default:
+                        passedOnce = false;
+                        moveX = Integer.parseInt(response[0])-1;
+                        moveY = Integer.parseInt(response[1])-1;
+                        this.model.tryMove(moveX, moveY);
+                        break;
                 }
-            moveX = Integer.parseInt(response[0])-1;
-            moveY = Integer.parseInt(response[1])-1;
-        } while(!this.model.tryMove(moveX, moveY));
+         } while(!this.model.moveWasValid);
 
     }
 
@@ -60,5 +77,9 @@ public class GoViewController {
             }
         }
         return currentBoard;
+    }
+
+    public boolean hasEnded() {
+        return this.hasEnded;
     }
 }

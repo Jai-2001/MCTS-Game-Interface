@@ -1,5 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +13,11 @@ class TurnStateTest {
     @BeforeEach
     void setUp() {
          defaultStates = new TurnState();
+    }
+
+    @AfterEach
+    void tearDown(){
+        defaultStates = null;
     }
 
     @Test
@@ -32,7 +38,7 @@ class TurnStateTest {
     @Test
     void testMassSwitches(){
         StoneTypes current;
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+        for (int i = 0; i < 10000; i++) {
             current = defaultStates.getCurrentPlayer().getType();
             if(i%2 == 0){
                 assertEquals(StoneTypes.BLACK, current);
@@ -43,18 +49,4 @@ class TurnStateTest {
         }
     }
 
-    @Test
-    void testArbitrarySwitches(){
-        StoneTypes current;
-        Random rng = new Random();
-        for (int i = 0; i < rng.nextInt(); i++) {
-            current = defaultStates.getCurrentPlayer().getType();
-            if(i%2 == 0){
-                assertEquals(StoneTypes.BLACK, current);
-            }  else {
-                assertEquals(StoneTypes.WHITE, current);
-            }
-            defaultStates.changePlayer();
-        }
-    }
 }
