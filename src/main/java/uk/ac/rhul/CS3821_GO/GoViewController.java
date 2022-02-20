@@ -45,7 +45,9 @@ public class GoViewController {
             playerName = "White";
         }
          do {
-            String[] response = this.view.promptInput(playerName, inputBuffer).split(",");
+            int[] intScores = this.model.countPoints();
+            String[] scores = {Integer.toString(intScores[0]), Integer.toString(intScores[1])};
+            String[] response = this.view.promptInput(playerName, scores, inputBuffer).split(",");
                 switch (response[0].charAt(0)){
                     case 'q':
                         this.model.moveWasValid = false;
