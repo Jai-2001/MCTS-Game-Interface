@@ -100,6 +100,7 @@ class GoViewControllerTest {
             testController.updateBoardState();
             assertFalse(testController.hasEnded());
         }
+        inputBuffer.close();
     }
 
     @Test
@@ -115,6 +116,22 @@ class GoViewControllerTest {
         testController.inputMove(threeInputBuffer);
         testController.updateBoardState();
         assertTrue(testController.hasEnded());
+        threeInputBuffer.close();
     }
+
+    @Test
+    void testScorePrint(){
+        String makesPoints = "1,3\r\n2,3\r\n2,2\r\n1,2\r\n2,4\r\n3,2\r\n3,3\r\n2,1\r\n3,1\r\n2,3\r\n4,2\r\n1,1\r\n2,2\r\n";
+        ByteArrayInputStream scoreInput = new ByteArrayInputStream(makesPoints.getBytes());
+        System.setIn(scoreInput);
+        Scanner scoreScanner = new Scanner(System.in);
+            for (int i = 0; i < 11; i++) {
+                testController.inputMove(scoreScanner);
+                testController.updateBoardState();
+            }
+        scoreScanner.close();
+        assertTrue(testOutput.toString().contains("Black:6, White:1"));
+    }
+
 
 }
