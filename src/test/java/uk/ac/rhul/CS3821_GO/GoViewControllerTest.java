@@ -35,6 +35,7 @@ class GoViewControllerTest {
     void tearDown() {
         System.setOut(new PrintStream(authenticOutput));
         System.setIn(authenticInput);
+        TurnState.flush();
         testModel = null;
     }
 
@@ -131,6 +132,20 @@ class GoViewControllerTest {
             }
         scoreScanner.close();
         assertTrue(testOutput.toString().contains("Black:6, White:1"));
+    }
+
+    @Test
+    void testScorePrintAgain(){
+        String morePoints = "1,3\r\n2,3\r\n2,2\r\n1,2\r\n2,4\r\n3,2\r\n3,3\r\n";
+        ByteArrayInputStream scoreInputToo = new ByteArrayInputStream(morePoints.getBytes());
+        System.setIn(scoreInputToo);
+        Scanner scoreScannerToo = new Scanner(System.in);
+        for (int i = 0; i < 6; i++) {
+            testController.inputMove(scoreScannerToo);
+            testController.updateBoardState();
+        }
+        scoreScannerToo.close();
+        assertTrue(testOutput.toString().contains("Black:1, White:0"));
     }
 
 
