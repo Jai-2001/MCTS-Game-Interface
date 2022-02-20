@@ -20,7 +20,7 @@ public class GoASCIIView {
     }
 
     public String promptInput(String playerName, Scanner inputBuffer) {
-        System.out.printf("%s, please input the intersection to place onto in the format 'x,y', or 'q' to quit:\n>  ", playerName);
+        System.out.printf("%s, please input the intersection to place onto in the format 'x,y', 'p' to pass, or 'q' to quit:\n>  ", playerName);
         String response = inputBuffer.nextLine();
         System.out.print("\n");
         return response;
