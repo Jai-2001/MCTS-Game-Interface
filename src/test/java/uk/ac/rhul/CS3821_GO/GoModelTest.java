@@ -17,6 +17,7 @@ class GoModelTest {
     @AfterEach
     void tearDown(){
         model = null;
+        TurnState.flush();
     }
     @Test
     void testInit(){
@@ -74,4 +75,15 @@ class GoModelTest {
         assertEquals(0, results[1]);
     }
 
+    @Test
+    void testMorePoints(){
+        int[][]  moreMoves = {{0,2},{1,2},{1,1},{0,1},{1,3},{2,1},{2,2},{1,0},{2,0},{1,2},{3,1},{0,0},{1,1}};
+        for (int[] move: moreMoves){
+            model.tryMove(move[0],move[1]);
+            model.nextTurn();
+        }
+        int[] moreResults = model.countPoints();
+        assertEquals(6, moreResults[0]);
+        assertEquals(1, moreResults[1]);
+    }
 }
