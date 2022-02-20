@@ -64,15 +64,14 @@ class GoModelTest {
 
     @Test
     void testPoints(){
-        model.tryMove(2,2);
-        model.nextTurn();
-        model.tryMove(4,4);
-        model.nextTurn();
-        model.tryMove(5,5);
-        model.nextTurn();
+        int[][]  moves = {{0,2},{1,2},{1,1},{0,1},{1,3},{2,1},{2,2}};
+        for (int[] move: moves){
+            model.tryMove(move[0],move[1]);
+            model.nextTurn();
+        }
         int[] results = model.countPoints();
-        assertEquals(2, results[0]);
-        assertEquals(1, results[1]);
+        assertEquals(1, results[0]);
+        assertEquals(0, results[1]);
     }
 
 }
