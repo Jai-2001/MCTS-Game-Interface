@@ -12,7 +12,7 @@ public class GoViewController {
         } while (game.updateBoardState());
     }
 
-    private GoModel model;
+    protected GoModel model;
     private GoASCIIView view;
     private boolean passedOnce;
     private boolean hasEnded;
@@ -61,7 +61,7 @@ public class GoViewController {
                         passedOnce = false;
                         moveX = Integer.parseInt(response[0])-1;
                         moveY = Integer.parseInt(response[1])-1;
-                        this.model.tryMove(moveX, moveY);
+                        this.model.tryMove(moveY,moveX);
                         break;
                 }
          } while(!this.model.moveWasValid);

@@ -71,7 +71,7 @@ class GoViewControllerTest {
         int[][] resultBoard = testController.getIntBoard();
         assertEquals(1, resultBoard[1][1]);
         assertEquals(2, resultBoard[1][2]);
-        assertEquals(1, resultBoard[1][3]);
+        assertEquals(1, resultBoard[3][1]);
         assertEquals(2, resultBoard[2][1]);
     }
 
@@ -86,7 +86,7 @@ class GoViewControllerTest {
             testController.updateBoardState();
         }
         tooInputBuffer.close();
-        assertTrue(testModel.getBoard()[1][3].isBlack());
+        assertTrue(testModel.getBoard()[3][1].isBlack());
 
     }
 
