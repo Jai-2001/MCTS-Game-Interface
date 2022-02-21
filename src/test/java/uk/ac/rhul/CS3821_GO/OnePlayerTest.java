@@ -43,9 +43,10 @@ class OnePlayerTest {
             for (int i = 0; i < 2; i++) {
                 testGame.inputMove(scanPlay);
                 testGame.updateBoardState();
+                testGame.play();
+                testGame.updateBoardState();
             }
         scanPlay.close();
-        testGame = new OnePlayerManager(10,true);
         assertEquals(TurnState.PLAYER_BLACK,testGame.model.getCurrentTurn().getCurrentPlayer());
 
     }
