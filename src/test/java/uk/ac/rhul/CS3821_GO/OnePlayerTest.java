@@ -48,6 +48,19 @@ class OnePlayerTest {
             }
         scanPlay.close();
         assertEquals(TurnState.PLAYER_BLACK,testGame.model.getCurrentTurn().getCurrentPlayer());
+    }
 
+    @Test
+    void testWinCondition() {
+        testGame = new OnePlayerManager(1, false);
+        String oneWin = "1,3\r\n2,3\r\n2,2\r\n1,2\r\n2,4\r\n3,2\r\n3,3\r\n1,1\r\np\r\n";
+        ByteArrayInputStream winBuf = new ByteArrayInputStream(oneWin.getBytes());
+        System.setIn(winBuf);
+        Scanner winScan = new Scanner(System.in);
+        for (int i = 0; i < 9; i++) {
+            testGame.inputMove(winScan);
+            testGame.updateBoardState();
+        }
+        assertTrue(testGame.someoneWon());
     }
 }
