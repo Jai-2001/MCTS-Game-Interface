@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GoNodeTest {
 
+    GoNode root;
+
     @BeforeEach
     void setUp() {
         GoNode root = new GoNode();
