@@ -14,7 +14,7 @@ class GoNodeTest {
 
     @BeforeEach
     void setUp() {
-        GoNode root = new GoNode();
+        root = new GoNode();
     }
 
     @AfterEach
