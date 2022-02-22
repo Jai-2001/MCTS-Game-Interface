@@ -26,7 +26,7 @@ public class OnePlayerManager extends GoViewController {
 
     private Random rng;
     private int scoreLimit;
-    private double explorationConfidence = 0.1;
+    private double explorationConfidence = 0.96;
     private int searchDepth = 89;
 
     public OnePlayerManager(int scoreLimit, boolean isBlack){
@@ -37,6 +37,12 @@ public class OnePlayerManager extends GoViewController {
             play();
             updateBoardState();
         }
+    }
+
+    public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth){
+        this(scoreLimit, isBlack);
+        this.explorationConfidence = confidence;
+        this.searchDepth = depth;
     }
 
     public void play(){

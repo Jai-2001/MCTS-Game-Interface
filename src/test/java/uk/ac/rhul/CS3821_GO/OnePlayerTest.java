@@ -81,7 +81,7 @@ class OnePlayerTest {
 
     @Test
     void testNestedSelection(){
-        OnePlayerManager nestedGame = new OnePlayerManager(1, true);
+        OnePlayerManager nestedGame = new OnePlayerManager(1, true, 0.96, 89);
         GoNode childAA = new GoNode(EndStates.LOST, null);
         GoNode childA = new GoNode(EndStates.RUNNING, new GoNode[]{childAA});
         GoNode childBA = new GoNode(EndStates.LOST, null);
@@ -89,5 +89,10 @@ class OnePlayerTest {
         GoNode childB = new GoNode(EndStates.RUNNING, new GoNode[]{childBA, childBB});
         GoNode root = new GoNode(EndStates.RUNNING, new GoNode[]{childA, childB});
         assertEquals(childBB, nestedGame.path(root));
+    }
+
+    @Test
+    void testRollOuts(){
+
     }
 }
