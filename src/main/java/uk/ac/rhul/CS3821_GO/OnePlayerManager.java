@@ -26,7 +26,8 @@ public class OnePlayerManager extends GoViewController {
 
     private Random rng;
     private int scoreLimit;
-    private double explorationConfidence = 2;
+    private double explorationConfidence = 0.1;
+    private int searchDepth = 89;
 
     public OnePlayerManager(int scoreLimit, boolean isBlack){
         super();
@@ -59,21 +60,36 @@ public class OnePlayerManager extends GoViewController {
         current.incrementVisits();
         ArrayList<GoNode> children = current.getChildren();
                 for (GoNode child : children) {
-                    sum = 0;
+                    sum = child.getScore();
                     child.incrementVisits();
                     EndStates endState = child.getEndState();
-                    if (endState == EndStates.WON) {
-                        sum++;
-                    } else if (endState == EndStates.LOST) {
-                        sum--;
-                    }
-                    double score = (sum/children.size()) + (explorationConfidence * (Math.sqrt(Math.log(current.getVisits()))/child.getVisits()));
-                    if (score > bestScore){
-                        bestScore = score;
-                        bestNode = child;
-                    }
+                        if (endState == EndStates.WON) {
+                            sum++;
+                        } else if (endState == EndStates.LOST) {
+                            sum--;
+                        }
+                    double score = sum + (explorationConfidence * (Math.sqrt(Math.log(current.getVisits()))/child.getVisits()));
+                    child.setScore(score);
+                        if (score > bestScore){
+                            bestScore = score;
+                            bestNode = child;
+                        }
                 }
         return bestNode;
+    }
+
+    public GoNode path(GoNode root){
+        GoNode candidate = root;
+        GoNode current = root;
+            for (int i = 0; i < this.searchDepth; i++) {
+                    if (current != null){
+                        candidate = current;
+                        current = UCB(current);;
+                    } else {
+                        current = root;
+                    }
+            }
+        return candidate;
     }
 
 }
