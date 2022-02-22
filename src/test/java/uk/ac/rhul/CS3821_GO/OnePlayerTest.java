@@ -63,4 +63,22 @@ class OnePlayerTest {
         }
         assertTrue(testGame.someoneWon());
     }
+
+    @Test
+    void testOptimalSelection(){
+       OnePlayerManager traversalGame  = new OnePlayerManager(1, true);
+       GoNode childA = new GoNode();
+       GoNode childB = new GoNode();
+       GoNode childAA = new GoNode();
+       GoNode childBA = new GoNode();
+       GoNode childBB = new GoNode();
+       childBB.setEndState(true);
+       childA.add(childAA);
+       childB.add(childBA);
+       childB.add(childBB);
+       GoNode root = new GoNode();
+       root.add(childA);
+       root.add(childB);
+       assertEquals(childBB, traversalGame.path(root));
+    }
 }
