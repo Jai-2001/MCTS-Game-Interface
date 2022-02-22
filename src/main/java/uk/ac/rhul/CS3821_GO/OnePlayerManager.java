@@ -1,13 +1,10 @@
 package uk.ac.rhul.CS3821_GO;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 public class OnePlayerManager extends GoViewController {
-
-    private Random rng;
-    private int scoreLimit;
-
 
     public static void main(String[] args) {
         int scoreLimit = 5;
@@ -26,6 +23,10 @@ public class OnePlayerManager extends GoViewController {
         } while (!manager.someoneWon());
         manager.updateBoardState();
     }
+
+    private Random rng;
+    private int scoreLimit;
+    private double explorationConfidence = 2;
 
     public OnePlayerManager(int scoreLimit, boolean isBlack){
         super();
@@ -49,6 +50,30 @@ public class OnePlayerManager extends GoViewController {
     public boolean someoneWon(){
         int[] scores = this.model.countPoints();
         return scores[0] >= this.scoreLimit || scores[1] >= this.scoreLimit;
+    }
+
+    public GoNode UCB(GoNode current) {
+        double bestScore = Double.MIN_VALUE;
+        double sum;
+        GoNode bestNode = null;
+        current.incrementVisits();
+        ArrayList<GoNode> children = current.getChildren();
+                for (GoNode child : children) {
+                    sum = 0;
+                    child.incrementVisits();
+                    EndStates endState = child.getEndState();
+                    if (endState == EndStates.WON) {
+                        sum++;
+                    } else if (endState == EndStates.LOST) {
+                        sum--;
+                    }
+                    double score = (sum/children.size()) + (explorationConfidence * (Math.sqrt(Math.log(current.getVisits()))/child.getVisits()));
+                    if (score > bestScore){
+                        bestScore = score;
+                        bestNode = child;
+                    }
+                }
+        return bestNode;
     }
 
 }
