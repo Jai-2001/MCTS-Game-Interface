@@ -69,16 +69,13 @@ class OnePlayerTest {
        OnePlayerManager traversalGame  = new OnePlayerManager(1, true);
        GoNode childA = new GoNode();
        GoNode childB = new GoNode();
-       GoNode childAA = new GoNode();
-       GoNode childBA = new GoNode();
-       GoNode childBB = new GoNode();
-       childBB.setEndState(true);
-       childA.add(childAA);
-       childB.add(childBA);
-       childB.add(childBB);
        GoNode root = new GoNode();
+       root.setEndState(EndStates.RUNNING);
+       childA.setEndState(EndStates.LOST);
+       childB.setEndState(EndStates.WON);
        root.add(childA);
        root.add(childB);
-       assertEquals(childBB, traversalGame.path(root));
+       assertEquals(childB, traversalGame.UCB(root));
+
     }
 }
