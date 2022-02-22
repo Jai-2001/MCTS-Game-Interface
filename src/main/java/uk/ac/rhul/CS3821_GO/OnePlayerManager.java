@@ -1,10 +1,12 @@
 package uk.ac.rhul.CS3821_GO;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 public class OnePlayerManager extends GoViewController {
+
+    private final int scoreLimit;
+    private MonteCarloTreeSearch treeSearch;
 
     public static void main(String[] args) {
         int scoreLimit = 5;
@@ -25,13 +27,11 @@ public class OnePlayerManager extends GoViewController {
     }
 
     private Random rng;
-    private int scoreLimit;
-    private double explorationConfidence = 0.96;
-    private int searchDepth = 89;
 
     public OnePlayerManager(int scoreLimit, boolean isBlack){
         super();
         this.scoreLimit = scoreLimit;
+        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, 1.1, 90);
         this.rng = new Random();
         if(isBlack){
             play();
@@ -41,8 +41,7 @@ public class OnePlayerManager extends GoViewController {
 
     public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth){
         this(scoreLimit, isBlack);
-        this.explorationConfidence = confidence;
-        this.searchDepth = depth;
+        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth);
     }
 
     public void play(){
@@ -60,42 +59,11 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public GoNode UCB(GoNode current) {
-        double bestScore = Double.MIN_VALUE;
-        double sum;
-        GoNode bestNode = null;
-        current.incrementVisits();
-        ArrayList<GoNode> children = current.getChildren();
-                for (GoNode child : children) {
-                    sum = child.getScore();
-                    child.incrementVisits();
-                    EndStates endState = child.getEndState();
-                        if (endState == EndStates.WON) {
-                            sum++;
-                        } else if (endState == EndStates.LOST) {
-                            sum--;
-                        }
-                    double score = sum + (explorationConfidence * (Math.sqrt(Math.log(current.getVisits()))/child.getVisits()));
-                    child.setScore(score);
-                        if (score > bestScore){
-                            bestScore = score;
-                            bestNode = child;
-                        }
-                }
-        return bestNode;
+        return treeSearch.UCB(current);
     }
 
     public GoNode path(GoNode root){
-        GoNode candidate = root;
-        GoNode current = root;
-            for (int i = 0; i < this.searchDepth; i++) {
-                    if (current != null){
-                        candidate = current;
-                        current = UCB(current);;
-                    } else {
-                        current = root;
-                    }
-            }
-        return candidate;
+        return treeSearch.path(root);
     }
 
 }
