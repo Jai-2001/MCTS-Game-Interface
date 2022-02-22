@@ -93,6 +93,17 @@ class OnePlayerTest {
 
     @Test
     void testRollOuts(){
-
+        OnePlayerManager autonomous = new OnePlayerManager(1, false, 1.5, 200);
+        String adverseInput = "1,1\r\n1,2\r\n9,9\r\n"; //1,1 is literally a sitting duck
+        ByteArrayInputStream adverseBuf = new ByteArrayInputStream(adverseInput.getBytes());
+        System.setIn(adverseBuf);
+        Scanner moves = new Scanner(System.in);
+        for (int i = 0; i < 3; i++) {
+            autonomous.inputMove(moves);
+            autonomous.updateBoardState();
+        }
+        autonomous.play();
+        moves.close();
+        assertEquals(1, autonomous.model.countPoints()[0]);
     }
 }
