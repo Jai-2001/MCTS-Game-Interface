@@ -6,10 +6,14 @@ public class GoNode{
 
     private ArrayList<GoNode> children;
     private ArrayList<int[]> moveList;
+    private EndStates endState;
+    private int visits;
 
     GoNode() {
         this.children = null;
         this.moveList = null;
+        this.endState = EndStates.RUNNING;
+        this.visits = 0;
     }
 
     public void add(GoNode child){
@@ -29,5 +33,21 @@ public class GoNode{
 
     public ArrayList<int[]> getMoves(){
         return this.moveList;
+    }
+
+    public void setEndState(EndStates state) {
+        this.endState = state;
+    }
+
+    public EndStates getEndState() {
+        return this.endState;
+    }
+
+    public void incrementVisits(){
+        this.visits++;
+    }
+
+    public double getVisits() {
+        return this.visits;
     }
 }
