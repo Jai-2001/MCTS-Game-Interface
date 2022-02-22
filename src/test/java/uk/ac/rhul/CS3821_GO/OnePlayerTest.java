@@ -78,4 +78,16 @@ class OnePlayerTest {
        assertEquals(childB, traversalGame.UCB(root));
 
     }
+
+    @Test
+    void testNestedSelection(){
+        OnePlayerManager nestedGame = new OnePlayerManager(1, true);
+        GoNode childAA = new GoNode(EndStates.LOST, null);
+        GoNode childA = new GoNode(EndStates.RUNNING, new GoNode[]{childAA});
+        GoNode childBA = new GoNode(EndStates.LOST, null);
+        GoNode childBB = new GoNode(EndStates.WON, null);
+        GoNode childB = new GoNode(EndStates.RUNNING, new GoNode[]{childBA, childBB});
+        GoNode root = new GoNode(EndStates.RUNNING, new GoNode[]{childA, childB});
+        assertEquals(childBB, nestedGame.path(root));
+    }
 }
