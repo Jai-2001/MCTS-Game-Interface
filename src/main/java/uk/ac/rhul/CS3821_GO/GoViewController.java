@@ -14,8 +14,8 @@ public class GoViewController {
 
     protected GoModel model;
     private GoASCIIView view;
-    private boolean passedOnce;
-    private boolean hasEnded;
+    protected boolean passedOnce;
+    protected boolean hasEnded;
 
     public GoViewController(){
         this(new GoModel(), new GoASCIIView());

@@ -70,7 +70,7 @@ public class GoModel {
         }
     }
 
-    private void updateLiberties(PlayerModel player){
+    protected void updateLiberties(PlayerModel player){
         StoneGroups groups = player.getGroups();
         groups.clearLiberties();
         List<Integer> toRemove = new ArrayList<>();
@@ -112,6 +112,10 @@ public class GoModel {
 
     public int[] countPoints() {
         return new int[]{TurnState.PLAYER_WHITE.getConcededPoints(), TurnState.PLAYER_BLACK.getConcededPoints()};
+    }
+
+    public Intersection getWagered(){
+        return this.board.getWagered();
     }
 }
 

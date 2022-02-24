@@ -2,6 +2,7 @@ package uk.ac.rhul.CS3821_GO;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class StoneMap {
@@ -58,7 +59,7 @@ public class StoneMap {
                     if(neighbourGroup != null) {
                         if (friendly.getLiberties(neighbour).size() > 1) {
                             return true;
-                        } else if(friendly.getAllGroups().stream().allMatch(i -> friendly.getLiberties(i).size()<=1)){
+                        } else if(friendly.getAllGroups().stream().filter(i -> friendly.getLiberties(i) != null).allMatch(i -> friendly.getLiberties(i).size() <= 1)){
                             return true;
                         }
                     }

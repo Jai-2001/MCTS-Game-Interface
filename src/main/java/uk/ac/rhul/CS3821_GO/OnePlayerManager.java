@@ -1,11 +1,10 @@
 package uk.ac.rhul.CS3821_GO;
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class OnePlayerManager extends GoViewController {
 
-    private final int scoreLimit;
+    private final boolean isBlack;
     private MonteCarloTreeSearch treeSearch;
 
     public static void main(String[] args) {
@@ -26,44 +25,59 @@ public class OnePlayerManager extends GoViewController {
         manager.updateBoardState();
     }
 
-    private Random rng;
-
-    public OnePlayerManager(int scoreLimit, boolean isBlack){
+    public OnePlayerManager(int scoreLimit, boolean isBlack) {
+        this(scoreLimit, isBlack, 1.1, 5, 90, new Random());
+    }
+    public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, Random rng){
         super();
-        this.scoreLimit = scoreLimit;
-        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, 1.1, 90);
-        this.rng = new Random();
-        if(isBlack){
-            play();
-            updateBoardState();
+        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack);
+        this.isBlack = isBlack;
+            if(isBlack){
+                play();
+                updateBoardState();
+            }
+    }
+
+    public boolean updateBoardState(){
+        int[] move = null;
+        if (!(this.passedOnce || this.hasEnded())){
+            Intersection wagered = this.model.getWagered();
+            move[0] = wagered.getX();
+            move[1] = wagered.getY();
         }
+        this.treeSearch.moveTaken(move);
+        boolean answer = super.updateBoardState();
+        if (treeSearch.someoneWon(this.model) == EndStates.LOST){
+            System.out.println("You win!");
+        } else if (treeSearch.someoneWon(this.model) == EndStates.WON){
+            System.out.println("You lost!");
+        }
+        return answer;
     }
 
-    public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth){
-        this(scoreLimit, isBlack);
-        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth);
+    public void play() {
+        this.treeSearch.path(new GoModel());
     }
-
-    public void play(){
-       boolean validMove;
-            do{
-                int x = this.rng.nextInt(this.model.BOARD_SIZE_X);
-                int y = this.rng.nextInt(this.model.BOARD_SIZE_Y);
-                validMove = this.model.tryMove(x,y);
-            } while (!validMove);
-    }
-
     public boolean someoneWon(){
-        int[] scores = this.model.countPoints();
-        return scores[0] >= this.scoreLimit || scores[1] >= this.scoreLimit;
+       return treeSearch.someoneWon(this.model) != EndStates.RUNNING;
     }
 
-    public GoNode UCB(GoNode current) {
-        return treeSearch.UCB(current);
-    }
-
-    public GoNode path(GoNode root){
-        return treeSearch.path(root);
+    static GoModel presimulate(ArrayList<int[]> moveList, int limit){
+        GoModel simModel = new GoModel();
+        limit = limit == 0 ? moveList.size() : limit;
+        for (int i = 0; i < limit; i++) {
+            int[] move = moveList.get(i);
+            if(move == null){
+                simModel.nextTurn();
+            } else {
+                simModel.tryMove(move[0], move[1]);
+                simModel.nextTurn();
+            }
+            simModel.updateLiberties(TurnState.PLAYER_BLACK);
+            simModel.updateLiberties(TurnState.PLAYER_BLACK);
+        }
+        TurnState.flush();
+        return simModel;
     }
 
 }

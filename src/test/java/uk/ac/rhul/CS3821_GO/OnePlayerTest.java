@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
+import java.util.Random;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +50,6 @@ class OnePlayerTest {
         scanPlay.close();
         assertEquals(TurnState.PLAYER_BLACK,testGame.model.getCurrentTurn().getCurrentPlayer());
     }
-
     @Test
     void testWinCondition() {
         testGame = new OnePlayerManager(1, false);
@@ -65,35 +65,9 @@ class OnePlayerTest {
     }
 
     @Test
-    void testOptimalSelection(){
-       OnePlayerManager traversalGame  = new OnePlayerManager(1, true);
-       GoNode childA = new GoNode();
-       GoNode childB = new GoNode();
-       GoNode root = new GoNode();
-       root.setEndState(EndStates.RUNNING);
-       childA.setEndState(EndStates.LOST);
-       childB.setEndState(EndStates.WON);
-       root.add(childA);
-       root.add(childB);
-       assertEquals(childB, traversalGame.UCB(root));
-
-    }
-
-    @Test
-    void testNestedSelection(){
-        OnePlayerManager nestedGame = new OnePlayerManager(1, true, 0.96, 89);
-        GoNode childAA = new GoNode(EndStates.LOST, null);
-        GoNode childA = new GoNode(EndStates.RUNNING, new GoNode[]{childAA});
-        GoNode childBA = new GoNode(EndStates.LOST, null);
-        GoNode childBB = new GoNode(EndStates.WON, null);
-        GoNode childB = new GoNode(EndStates.RUNNING, new GoNode[]{childBA, childBB});
-        GoNode root = new GoNode(EndStates.RUNNING, new GoNode[]{childA, childB});
-        assertEquals(childBB, nestedGame.path(root));
-    }
-
-    @Test
     void testRollOuts(){
-        OnePlayerManager autonomous = new OnePlayerManager(1, false, 1.5, 200);
+        OnePlayerManager autonomous = new OnePlayerManager
+                (1, false ,1.5, 5, 82, new Random(303));
         String adverseInput = "1,1\r\n1,2\r\n9,9\r\n"; //1,1 is literally a sitting duck
         ByteArrayInputStream adverseBuf = new ByteArrayInputStream(adverseInput.getBytes());
         System.setIn(adverseBuf);

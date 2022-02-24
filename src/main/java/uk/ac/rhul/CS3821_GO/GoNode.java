@@ -1,12 +1,12 @@
 package uk.ac.rhul.CS3821_GO;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GoNode{
 
     private ArrayList<GoNode> children;
     private ArrayList<int[]> moveList;
+    private ArrayList<int[]> immediateAxioms;
     private EndStates endState;
     private int visits;
     private double score;
@@ -16,13 +16,17 @@ public class GoNode{
         this.moveList = null;
         this.endState = EndStates.RUNNING;
         this.visits = 0;
+        this.score = 0;
+        this.immediateAxioms = new ArrayList<>(GoLegalMoves.completeSet);
     }
 
-    GoNode(EndStates state, GoNode[] children){
-        this.children = children == null ? null : new ArrayList<>(List.of(children));
+    GoNode(EndStates state, ArrayList<GoNode> children){
+        this.children = children;
         this.moveList = null;
         this.endState = state;
         this.visits = 0;
+        this.score = 0;
+        this.immediateAxioms = new ArrayList<>(GoLegalMoves.completeSet);
     }
 
     public void add(GoNode child){
@@ -41,7 +45,7 @@ public class GoNode{
     }
 
     public ArrayList<int[]> getMoves(){
-        return this.moveList;
+        return this.moveList == null ? new ArrayList<>(): this.moveList;
     }
 
     public void setEndState(EndStates state) {
@@ -66,5 +70,9 @@ public class GoNode{
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public ArrayList<int[]> getAxioms() {
+        return immediateAxioms;
     }
 }
