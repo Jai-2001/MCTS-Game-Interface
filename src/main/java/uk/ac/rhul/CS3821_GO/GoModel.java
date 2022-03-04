@@ -1,6 +1,7 @@
 package uk.ac.rhul.CS3821_GO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class GoModel {
@@ -12,6 +13,8 @@ public class GoModel {
     private StoneMap board;
     boolean moveWasValid;
     private int lastGroup;
+    private int lastX;
+    private int lastY;
 
     GoModel(){
         this(new StoneMap(BOARD_SIZE_X,BOARD_SIZE_Y), new TurnState());
@@ -22,6 +25,8 @@ public class GoModel {
         this.moveWasValid = false;
         this.board = board;
         this.lastGroup = -1;
+        this.lastX  = -1;
+        this.lastY  = -1;
     }
 
     public TurnState getCurrentTurn() {
@@ -31,13 +36,17 @@ public class GoModel {
     public void nextTurn() {
         PlayerModel currentPlayer = this.currentPlayerTurn.getCurrentPlayer();
         PlayerModel previousPlayer = this.currentPlayerTurn.getPreviousPlayer();
-        if (moveWasValid){
-            placeStone(currentPlayer);
-            updateLiberties(currentPlayer);
-            updateLiberties(previousPlayer);
-            this.currentPlayerTurn.changePlayer();
-        }
-
+        Intersection wagered = getWagered();
+            if (moveWasValid){
+                    if(wagered.getX() != this.lastX || wagered.getY() != this.lastY){
+                        placeStone(currentPlayer);
+                        this.lastX = wagered.getX();
+                        this.lastY = wagered.getY();
+                    }
+                updateLiberties(currentPlayer);
+                updateLiberties(previousPlayer);
+                this.currentPlayerTurn.changePlayer();
+            }
     }
 
     private void placeStone(PlayerModel player){
@@ -70,7 +79,7 @@ public class GoModel {
         }
     }
 
-    private void updateLiberties(PlayerModel player){
+    protected void updateLiberties(PlayerModel player){
         StoneGroups groups = player.getGroups();
         groups.clearLiberties();
         List<Integer> toRemove = new ArrayList<>();
@@ -111,7 +120,13 @@ public class GoModel {
     }
 
     public int[] countPoints() {
-        return new int[]{TurnState.PLAYER_WHITE.getConcededPoints(), TurnState.PLAYER_BLACK.getConcededPoints()};
+        TurnState turn = this.getCurrentTurn();
+        return new int[]{turn.getWhite().getConcededPoints(), turn.getBlack().getConcededPoints()};
+    }
+
+
+    public Intersection getWagered(){
+        return this.board.getWagered();
     }
 }
 

@@ -12,10 +12,10 @@ public class GoViewController {
         } while (game.updateBoardState());
     }
 
-    private GoModel model;
+    protected GoModel model;
     private GoASCIIView view;
-    private boolean passedOnce;
-    private boolean hasEnded;
+    protected boolean passedOnce;
+    protected boolean hasEnded;
 
     public GoViewController(){
         this(new GoModel(), new GoASCIIView());
@@ -41,7 +41,8 @@ public class GoViewController {
         int moveX = -1;
         int moveY = -1;
         String playerName = "Black";
-        if (this.model.getCurrentTurn().getCurrentPlayer() == TurnState.PLAYER_WHITE){
+        TurnState turn = this.model.getCurrentTurn();
+        if (turn.getCurrentPlayer() == turn.getWhite()){
             playerName = "White";
         }
          do {
@@ -61,7 +62,7 @@ public class GoViewController {
                         passedOnce = false;
                         moveX = Integer.parseInt(response[0])-1;
                         moveY = Integer.parseInt(response[1])-1;
-                        this.model.tryMove(moveX, moveY);
+                        this.model.tryMove(moveY,moveX);
                         break;
                 }
          } while(!this.model.moveWasValid);

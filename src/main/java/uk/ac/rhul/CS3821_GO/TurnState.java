@@ -5,10 +5,14 @@ public class TurnState {
     private PlayerModel previous;
     static PlayerModel PLAYER_BLACK = new PlayerModel(StoneTypes.BLACK);
     static PlayerModel PLAYER_WHITE = new PlayerModel(StoneTypes.WHITE);
+    private PlayerModel black;
+    private PlayerModel white;
 
     TurnState(){
-        this.current = PLAYER_BLACK;
-        this.previous = PLAYER_WHITE;
+        this.current = new PlayerModel(StoneTypes.BLACK);
+        this.black = this.current;
+        this.previous = new PlayerModel(StoneTypes.WHITE);
+        this.white = this.previous;
     }
 
     public PlayerModel getCurrentPlayer() {
@@ -19,17 +23,25 @@ public class TurnState {
     }
 
     public void changePlayer() {
-            if(getCurrentPlayer().equals(PLAYER_WHITE)){
-                this.current = PLAYER_BLACK;
-                this.previous = PLAYER_WHITE;
+            if(this.current.equals(this.white)){
+                this.current = this.black;
+                this.previous = this.white;
             } else {
-                this.current = PLAYER_WHITE;
-                this.previous = PLAYER_BLACK;
+                this.current = this.white;
+                this.previous = this.black;
             }
     }
 
     public static void flush(){
         PLAYER_BLACK = new PlayerModel(StoneTypes.BLACK);
         PLAYER_WHITE = new PlayerModel(StoneTypes.WHITE);
+    }
+
+    public PlayerModel getBlack() {
+        return black;
+    }
+
+    public PlayerModel getWhite() {
+        return white;
     }
 }
