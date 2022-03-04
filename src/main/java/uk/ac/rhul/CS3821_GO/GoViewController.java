@@ -41,7 +41,8 @@ public class GoViewController {
         int moveX = -1;
         int moveY = -1;
         String playerName = "Black";
-        if (this.model.getCurrentTurn().getCurrentPlayer() == TurnState.PLAYER_WHITE){
+        TurnState turn = this.model.getCurrentTurn();
+        if (turn.getCurrentPlayer() == turn.getWhite()){
             playerName = "White";
         }
          do {
