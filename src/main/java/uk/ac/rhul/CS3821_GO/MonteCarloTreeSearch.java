@@ -12,19 +12,21 @@ public class MonteCarloTreeSearch {
     private final Random rng;
     private final boolean isBlack;
     private final int rollOuts;
+    private final int iterations;
     private ArrayList<int[]> moveList;
 
     public MonteCarloTreeSearch(int scoreLimit, boolean isBlack){
-        this(scoreLimit, 50000, 20, 180, new Random(), isBlack);
+        this(scoreLimit, 50000, 20, 180, new Random(), isBlack, 5);
     }
 
-    public MonteCarloTreeSearch(int scoreLimit, double confidence, int depth, int rollouts, Random rng, boolean isBlack) {
+    public MonteCarloTreeSearch(int scoreLimit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations) {
         this.scoreLimit = scoreLimit;
         this.explorationConfidence = confidence;
         this.searchDepth = depth;
         this.rng = rng;
         this.isBlack = isBlack;
         this.rollOuts = rollouts;
+        this.iterations = iterations;
         this.logRoot = new GoNode();
         this.shiftingRoot = logRoot;
         this.moveList = new ArrayList<>();
@@ -62,19 +64,24 @@ public class MonteCarloTreeSearch {
     }
 
     public int[] path(){
-        GoNode leaf = select(this.shiftingRoot);
-        if(leaf.getVisits() != 1){
-            do {
-                leaf = select(leaf);
-            } while (leaf.getVisits() != 1);
-        }
-            for (int j = 0; j < this.rollOuts; j++) {
-                GoModel simModel = presimulate(leaf.getMoves(), this.moveList.size());
-                GoNode terminates = rollOut(leaf, simModel);
-                backpropagate(leaf, terminates);
+        GoNode leaf;
+            for (int i = 0; i < iterations; i++) {
+                leaf = select(this.shiftingRoot);
+                GoNode lastLeaf = leaf;
+                if (leaf.getVisits() <= this.moveList.size()) {
+                    do {
+                        lastLeaf = leaf;
+                        leaf = select(leaf);
+                    } while (leaf.getVisits() != 1 && leaf != lastLeaf);
+                }
+                for (int j = 0; j < this.rollOuts; j++) {
+                    GoModel simModel = presimulate(leaf.getMoves(), this.moveList.size());
+                    GoNode terminates = rollOut(leaf, simModel);
+                    backpropagate(lastLeaf, terminates);
+                }
             }
-        this.shiftingRoot = select(leaf);
-        int[] bestMove =  this.shiftingRoot.getMoves().get(this.moveList.size());
+        leaf = UCB(this.shiftingRoot);
+        int[] bestMove =  leaf.getMoves().get(this.moveList.size());
         return bestMove;
     }
 
@@ -83,7 +90,12 @@ public class MonteCarloTreeSearch {
         GoNode bestNode = current;
         ArrayList<GoNode> children = current.getChildren();
         for (GoNode child : children) {
-            double score =child.getScore() +(this.explorationConfidence * Math.sqrt(Math.log(child.getVisits())/ current.getVisits()));
+            double score;
+            if (child.getVisits() == 0){
+                score = Double.POSITIVE_INFINITY;  //division by 0 is NaN but we want to treat 0 as infinite
+            } else{
+                score = (child.getScore()/child.getVisits()) +(this.explorationConfidence * Math.sqrt(Math.log(current.getVisits())/ child.getVisits()));
+            }
             if (score > bestScore) {
                 bestScore = score;
                 bestNode = child;
@@ -135,7 +147,7 @@ public class MonteCarloTreeSearch {
     }
 
     private void backpropagate(GoNode start, GoNode ball) {
-        int score = ball.getEndState().ordinal() - 1;
+        double score = ball.getEndState() == EndStates.WON ? 1:0;
         start.setScore(start.getScore() + score);
         start.incrementVisits();
         while (ball != start){
@@ -170,10 +182,10 @@ public class MonteCarloTreeSearch {
             humanIndex = 1;
         }
         int[] points = model.countPoints();
-        if(points[compIndex] >= this.scoreLimit){
-            return EndStates.WON;
-        } else if (points[humanIndex] >= scoreLimit){
+        if(points[humanIndex] >= scoreLimit){
             return EndStates.LOST;
+        } else if (points[compIndex] >= scoreLimit){
+            return EndStates.WON;
         } else{
             return EndStates.RUNNING;
         }

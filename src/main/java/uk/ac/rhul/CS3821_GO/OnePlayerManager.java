@@ -5,7 +5,6 @@ import java.util.*;
 public class OnePlayerManager extends GoViewController {
 
     private MonteCarloTreeSearch treeSearch;
-    private boolean playerMoved;
 
     public static void main(String[] args) {
         int scoreLimit = 5;
@@ -26,12 +25,15 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public OnePlayerManager(int scoreLimit, boolean isBlack) {
-        this(scoreLimit, isBlack, 10000000, 5, 82, new Random());
+        this(scoreLimit, isBlack, 10000000, 5, 82,5,  new Random());
     }
-    public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, Random rng){
+    public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
+        this(scoreLimit, isBlack, Math.sqrt(2.0), Integer.MAX_VALUE, 82, 3200, new Random());
+        this.view = view;
+    }
+    public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, Random rng){
         super();
-        this.playerMoved = true;
-        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack);
+        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack, iterations);
             if(isBlack){
                 play();
                 updateBoardState();
@@ -41,7 +43,6 @@ public class OnePlayerManager extends GoViewController {
     @Override
     public void inputMove(Scanner inputBuffer){
         super.inputMove(inputBuffer);
-        this.playerMoved = true;
     }
 
     @Override
@@ -63,11 +64,15 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public void play() {
-        int[] compMove = this.treeSearch.path();
-        this.playerMoved = false;
-        if (compMove[0] != -1){
-            this.model.tryMove(compMove[0], compMove[1]);
-        }
+        boolean track;
+        do {
+            int[] compMove = this.treeSearch.path();
+            if (compMove[0] == -1) {
+                track = true;
+            } else{
+                track = this.model.tryMove(compMove[0], compMove[1]);
+            }
+        } while(!track);
     }
     public boolean someoneWon(){
        return treeSearch.someoneWon(this.model) != EndStates.RUNNING;
