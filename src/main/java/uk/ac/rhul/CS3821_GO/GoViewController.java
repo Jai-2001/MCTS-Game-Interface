@@ -13,7 +13,7 @@ public class GoViewController {
     }
 
     protected GoModel model;
-    private GoASCIIView view;
+    View view;
     protected boolean passedOnce;
     protected boolean hasEnded;
 
@@ -21,7 +21,7 @@ public class GoViewController {
         this(new GoModel(), new GoASCIIView());
     }
 
-    protected GoViewController(GoModel model, GoASCIIView view) {
+    public GoViewController(GoModel model, View view) {
         this.model = model;
         this.view = view;
         this.passedOnce = false;

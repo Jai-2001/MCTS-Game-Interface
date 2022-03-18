@@ -2,7 +2,7 @@ package uk.ac.rhul.CS3821_GO;
 
 import java.util.Scanner;
 
-public class GoASCIIView {
+public class GoASCIIView implements View{
 
     public void printBoard(int[][] asciiBoard) {
         for(int[] row : asciiBoard){
@@ -18,6 +18,12 @@ public class GoASCIIView {
             System.out.println();
         }
     }
+
+    @Override
+    public String promptInput(String playerName) {
+        return promptInput(playerName,new Scanner(System.in));
+    }
+
 
     public String promptInput(String playerName, Scanner inputBuffer) {
         return promptInput(playerName, new String[]{"N/A", "N/A"}, inputBuffer);
