@@ -15,7 +15,7 @@ public class GoNode{
         this.children = null;
         this.moveList = null;
         this.endState = EndStates.RUNNING;
-        this.visits = 1;
+        this.visits = 0;
         this.score = 0;
     }
 
@@ -23,7 +23,7 @@ public class GoNode{
         this.children = children;
         this.moveList = null;
         this.endState = state;
-        this.visits = 1;
+        this.visits = 0;
         this.score = 0;
     }
 
