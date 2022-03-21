@@ -35,7 +35,6 @@ class GoViewControllerTest {
     void tearDown() {
         System.setOut(new PrintStream(authenticOutput));
         System.setIn(authenticInput);
-        TurnState.flush();
         testModel = null;
     }
 

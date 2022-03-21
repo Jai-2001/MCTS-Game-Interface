@@ -48,9 +48,7 @@ class PlayerModelTest {
     @Test
     void testStoneNotPresent(){
         Intersection notPresent = new Intersection();
-        assertThrows(IllegalArgumentException.class,
-                ()-> single.getGroup(notPresent)
-        );
+        assertEquals(-1,single.getGroup(notPresent));
     }
 
     @Test
@@ -96,16 +94,9 @@ class PlayerModelTest {
         single.addStone(1, oneForRemoval);
         single.addStone(1, oneAlsoRemoval);
         single.clearGroup(1);
-        assertThrows(IllegalArgumentException.class,
-                () ->{
-                    single.getGroup(oneForRemoval);
-                }
-        );
-        assertThrows(IllegalArgumentException.class,
-                () ->{
-                    single.getGroup(oneAlsoRemoval);
-                }
-        );
+        assertEquals(-1, single.getGroup(oneForRemoval));
+        assertEquals(-1, single.getGroup(oneAlsoRemoval));
+
     }
 
     @Test

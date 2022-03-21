@@ -11,7 +11,7 @@ public class OnePlayerManager extends GoViewController {
         boolean isBlack = true;
         if (args.length == 2){
             scoreLimit = Integer.parseInt(args[0]);
-            isBlack = Integer.parseInt(args[0]) == 1;
+            isBlack = Integer.parseInt(args[1]) == 1;
         }
         OnePlayerManager manager = new OnePlayerManager(scoreLimit, isBlack);
         Scanner inputBuffer = new Scanner(System.in);
@@ -25,15 +25,15 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public OnePlayerManager(int scoreLimit, boolean isBlack) {
-        this(scoreLimit, isBlack, 10000000, 5, 82,5,  new Random());
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 5, 82,3,  new Random());//ASCII uses this
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), Integer.MAX_VALUE, 82, 3200, new Random());
+        this(scoreLimit, isBlack, Math.sqrt(2.0), Integer.MAX_VALUE, 82, 10, new Random());//GUI uses this
         this.view = view;
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, Random rng){
         super();
-        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack, iterations);
+        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack, iterations);//Tests use this
             if(isBlack){
                 play();
                 updateBoardState();
@@ -71,6 +71,11 @@ public class OnePlayerManager extends GoViewController {
                 track = true;
             } else{
                 track = this.model.tryMove(compMove[0], compMove[1]);
+                    if(this.treeSearch.isWinningMove()){
+                        this.model.placeStone(this.model.getCurrentTurn().getCurrentPlayer());
+                        this.model.moveWasValid = true;
+                        track = true;
+                    }
             }
         } while(!track);
     }

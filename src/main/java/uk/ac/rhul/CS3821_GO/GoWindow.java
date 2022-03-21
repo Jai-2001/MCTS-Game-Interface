@@ -1,5 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -10,6 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -20,7 +22,7 @@ import java.util.concurrent.locks.LockSupport;
 public class GoWindow extends Application {
 
     private static GridPane grid = new GridPane();
-    private static Text info = new Text("TESTING");
+    private static Text info = new Text();
     private static VBox playWin = new VBox(grid, info);
     private static String response;
     private static CompletableFuture<String> question;
@@ -28,6 +30,7 @@ public class GoWindow extends Application {
 
     @Override
     public void start(Stage primaryStage){
+        GoWindow.info.setFont(Font.font("Arial"));
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(576);
         primaryStage.setMinHeight(640);
@@ -37,7 +40,7 @@ public class GoWindow extends Application {
 
     public static void refresh(int[][] board, String[] score, String playerName){
             if(score[0].equals("won")){
-                info.setText(playerName  + " WINS!");
+                info.setText(playerName  + "\nWINS!");
             } else{
                 info.setText("Points: Black: " + score[0] + ", White: " + score[1] + "\nIt is " + playerName + "'s turn." );
             }
@@ -90,10 +93,19 @@ public class GoWindow extends Application {
         @Override
         public void handle(MouseEvent e) {
             response = (1 + (int) e.getSceneX()/64)+ "," + (1 +  (int)e.getSceneY()/64);
+            AnimationTimer loader  = new AnimationTimer() {
+                private long prev = System.nanoTime();
+                @Override
+                public void handle(long now) {
+                    long time  = now - this.prev;
+                    String[] infoLines = info.getText().split("\n");
+                    info.setText(infoLines[0] + "\n" + infoLines[1] + "\n" +
+                                "Processing Move (" + response + "):"+ (time/1000000) + "ms elapsed.");
+                }
+            };
+            loader.start();
             question.complete(response);
         }
     };
-
-
 
 }

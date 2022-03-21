@@ -17,12 +17,11 @@ class GoModelTest {
     @AfterEach
     void tearDown(){
         model = null;
-        TurnState.flush();
     }
     @Test
     void testInit(){
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();
-        assertEquals(TurnState.PLAYER_BLACK, currentPlayer);
+        assertEquals(model.getCurrentTurn().getBlack(), currentPlayer);
     }
 
     @Test
@@ -30,7 +29,7 @@ class GoModelTest {
         model.tryMove(1,1);
         model.nextTurn();
         PlayerModel currentPlayer = model.getCurrentTurn().getCurrentPlayer();
-        assertEquals(TurnState.PLAYER_WHITE, currentPlayer);
+        assertEquals(model.getCurrentTurn().getWhite(), currentPlayer);
     }
 
     @Test

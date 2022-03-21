@@ -49,7 +49,7 @@ public class TreeSearchTest {
     @Test
     void testRollOuts(){
         MonteCarloTreeSearch autonomous =
-                new MonteCarloTreeSearch(1,  1, 1, 82, new Random(189219), false, 1);
+                new MonteCarloTreeSearch(1,  1, 1, 82, new Random(189219), false, 2);
         autonomous.moveTaken(new int[]{0, 0});
         autonomous.moveTaken(new int[]{0, 1});
         autonomous.moveTaken(new int[]{-1, -1});

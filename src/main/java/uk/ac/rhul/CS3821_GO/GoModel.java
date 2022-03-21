@@ -1,7 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GoModel {
@@ -49,25 +48,23 @@ public class GoModel {
             }
     }
 
-    private void placeStone(PlayerModel player){
+    protected void placeStone(PlayerModel player){
         StoneGroups groups = player.getGroups();
         Intersection wagered = this.board.getWagered();
-        if(player.equals(TurnState.PLAYER_WHITE)){
+        if(player.equals(this.currentPlayerTurn.getWhite())){
             wagered.setWhite();
         } else{
             wagered.setBlack();
         }
-        int thisGroup;
-        try{
-            thisGroup = groups.getGroup(wagered);
-        } catch (IllegalArgumentException e){
+        int thisGroup = groups.getGroup(wagered);
+        if (thisGroup == -1){
             thisGroup = ++lastGroup;
             groups.addStone(thisGroup, wagered);
         }
         int xPos = wagered.getX();
         int yPos = wagered.getY();
         int playerIndex = player.getType().ordinal();
-        for(int[] offset : StoneMap.prepareOffsets(xPos, yPos)){
+        for(int[] offset : OffsetFactory.prepareOffsets(xPos, yPos)){
             Intersection adjacent = this.board.getStone(xPos + offset[0], yPos + offset[1]);
             if(adjacent.getRepresentation() == playerIndex){
                 int child = groups.getGroup(adjacent);
@@ -88,7 +85,7 @@ public class GoModel {
             for (Intersection stone: stoneString) {
                 int xPos = stone.getX();
                 int yPos = stone.getY();
-                for(int[] offset: StoneMap.prepareOffsets(xPos, yPos)){
+                for(int[] offset: OffsetFactory.prepareOffsets(xPos, yPos)){
                     Intersection adjacent = this.board.getStone(xPos + offset[0], yPos + offset[1]);
                     if (adjacent.isCleared()){
                         groups.addLiberty(index, adjacent);

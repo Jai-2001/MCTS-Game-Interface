@@ -17,7 +17,6 @@ class StoneMapTest {
 
     @BeforeEach()
     void setUp(){
-        TurnState.flush();
         turn = new TurnState();
         parent = new GoModel(new StoneMap(9,9), turn);
 
@@ -26,21 +25,20 @@ class StoneMapTest {
     @AfterEach
     void tearDown(){
         parent = null;
-        TurnState.flush();
         turn = null;
     }
 
     @Test
     void testBoundedOffsets(){
         Set<int[]> topLeftRejects = new HashSet<>(Arrays.asList(new int[][]{{-1,0}, {0,-1}}));
-        Set<int[]> topLeftBounded = StoneMap.prepareOffsets(0,0);
+        int[][] topLeftBounded = OffsetFactory.prepareOffsets(0,0);
         for (int[] rejected : topLeftRejects) {
-            assertFalse(topLeftBounded.stream().anyMatch(bounded -> Arrays.equals(bounded, rejected)));
+            assertFalse(Arrays.stream(topLeftBounded).anyMatch(bounded -> Arrays.equals(bounded, rejected)));
         }
         Set<int[]> bottomRightRejects = new HashSet<>(Arrays.asList(new int[][]{{0,1},{1,0}}));
-        Set<int[]> bottomRightBounded = StoneMap.prepareOffsets(8,8);
+        int[][] bottomRightBounded = OffsetFactory.prepareOffsets(8,8);
         for (int[] rejected : bottomRightRejects) {
-            assertFalse(bottomRightBounded.stream().anyMatch(bounded -> Arrays.equals(bounded, rejected)));
+            assertFalse(Arrays.stream(bottomRightBounded).anyMatch(bounded -> Arrays.equals(bounded, rejected)));
         }
     }
 

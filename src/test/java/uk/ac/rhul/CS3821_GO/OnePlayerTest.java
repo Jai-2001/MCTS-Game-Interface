@@ -26,18 +26,17 @@ class OnePlayerTest {
     void tearDown() {
         System.setOut(new PrintStream(authenticOutput));
         System.setIn(authenticInput);
-        TurnState.flush();
     }
 
     @Test
     void testInit() {
-        testGame = new OnePlayerManager(10,true);
-        assertEquals(TurnState.PLAYER_WHITE,testGame.model.getCurrentTurn().getCurrentPlayer());
+        testGame = new OnePlayerManager(10,true, 1,1,1,1,new Random());
+        assertEquals(testGame.model.getCurrentTurn().getWhite(),testGame.model.getCurrentTurn().getCurrentPlayer());
     }
 
     @Test
     void testPlayerStart() {
-        testGame = new OnePlayerManager(10,false);
+        testGame = new OnePlayerManager(10,false,1,1,1,1,new Random());
         String pStart = "1,1\r\n1,1\r\np\r\n";
         ByteArrayInputStream playerStream = new ByteArrayInputStream(pStart.getBytes());
         Scanner scanPlay = new Scanner(playerStream);
@@ -52,7 +51,7 @@ class OnePlayerTest {
     }
     @Test
     void testWinCondition() {
-        testGame = new OnePlayerManager(1, false);
+        testGame = new OnePlayerManager(1, false,1,1,1,1,new Random());
         String oneWin = "1,3\r\n2,3\r\n2,2\r\n1,2\r\n2,4\r\n3,2\r\n3,3\r\n1,1\r\np\r\n";
         ByteArrayInputStream winBuf = new ByteArrayInputStream(oneWin.getBytes());
         System.setIn(winBuf);

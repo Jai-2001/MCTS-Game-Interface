@@ -14,7 +14,7 @@ public class GoWindowView implements View{
     public static void main(String[] args) {
         GoWindowView view = new GoWindowView();
         view.go();
-        OnePlayerManager controller = new OnePlayerManager(1, false, view);
+        OnePlayerManager controller = new OnePlayerManager(4, true, view);
             do {
                 controller.inputMove(new Scanner(new ByteArrayInputStream("".getBytes())));
                 LockSupport.unpark(view.app);

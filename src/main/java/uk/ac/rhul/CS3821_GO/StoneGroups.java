@@ -18,7 +18,7 @@ public class StoneGroups {
 
     public int getGroup(Intersection query) {
         if (!stonesInverse.containsKey(query)) {
-            throw new IllegalArgumentException("This stone does not belong to this player.");
+            return -1;
         }
         return stonesInverse.get(query);
     }
