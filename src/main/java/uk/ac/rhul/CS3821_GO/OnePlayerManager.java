@@ -70,7 +70,7 @@ public class OnePlayerManager extends GoViewController {
             if (compMove[0] == -1) {
                 track = true;
             } else{
-                track = this.model.tryMove(compMove[0], compMove[1]);
+                track = this.model.tryMove(compMove[1], compMove[0]);
             }
         } while(!track);
     }

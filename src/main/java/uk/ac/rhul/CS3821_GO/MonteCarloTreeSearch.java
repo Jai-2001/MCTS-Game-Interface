@@ -197,9 +197,9 @@ public class MonteCarloTreeSearch {
     }
 
     private int[] randomMove(GoModel simModel) {
-        int[] move ;
+        int[] move;
             do{
-                move = GoLegalMoves.movesArray[(int) (this.rng.nextDouble() * 81)];//all hell has broken loose if this fails.
+                move = GoLegalMoves.movesArray[(int) (this.rng.nextDouble() * 82)];
             } while (!simModel.tryMove(move[0], move[1]));
         return move;
     }

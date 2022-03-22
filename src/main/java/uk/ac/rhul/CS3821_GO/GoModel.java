@@ -37,7 +37,7 @@ public class GoModel {
         PlayerModel previousPlayer = this.currentPlayerTurn.getPreviousPlayer();
         Intersection wagered = getWagered();
             if (moveWasValid){
-                    if(wagered.getX() != this.lastX || wagered.getY() != this.lastY){
+                    if(wagered!=null && (wagered.getX() != this.lastX || wagered.getY() != this.lastY)){
                         placeStone(currentPlayer);
                         this.lastX = wagered.getX();
                         this.lastY = wagered.getY();
