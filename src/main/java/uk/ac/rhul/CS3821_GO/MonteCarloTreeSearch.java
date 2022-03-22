@@ -1,7 +1,6 @@
 package uk.ac.rhul.CS3821_GO;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import static uk.ac.rhul.CS3821_GO.EndStates.*;
 
@@ -76,13 +75,6 @@ public class MonteCarloTreeSearch {
         GoNode leaf;
             for (int i = 0; i < iterations; i++) {
                 leaf = UCB(this.shiftingRoot);
-                GoNode lastLeaf;
-                if (leaf.getVisits() <= this.moveList.size()) {
-                    do {
-                        lastLeaf = leaf;
-                        leaf = select(leaf);
-                    } while (leaf.getVisits() != 0 && leaf != lastLeaf);
-                }
                 for (int j = 0; j < this.rollOuts; j++) {
                     GoModel simModel = presimulate(leaf.getMoves(),0);
                     GoNode terminates = rollOut(leaf, simModel);
@@ -185,7 +177,6 @@ public class MonteCarloTreeSearch {
             GoNode nextBall = new GoNode(someoneWon(simModel), null);
             nextBall.setMoves(runningMoves);
             nextBall.setParent(ball);
-            ball.incrementVisits();
             ball.add(nextBall);
             ball = nextBall;
             depth--;
