@@ -33,7 +33,7 @@ public class GoWindow extends Application {
         GoWindow.info.setFont(Font.font("Arial"));
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(576);
-        primaryStage.setMinHeight(640);
+        primaryStage.setMinHeight(672);
         primaryStage.show();
         response = null;
     }

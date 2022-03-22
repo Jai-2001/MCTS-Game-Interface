@@ -108,7 +108,7 @@ public class GoModel {
     }
 
     public boolean tryMove(int xPos, int yPos){
-        if (this.board.checkMove(xPos, yPos, currentPlayerTurn)){
+        if (xPos == -1 || this.board.checkMove(xPos, yPos, currentPlayerTurn)){
             this.moveWasValid = true;
             return true;
         }
@@ -121,6 +121,10 @@ public class GoModel {
         return new int[]{turn.getWhite().getConcededPoints(), turn.getBlack().getConcededPoints()};
     }
 
+    public void force(){
+        this.lastX = -1024;
+        this.lastY = this.lastX;
+    }
 
     public Intersection getWagered(){
         return this.board.getWagered();

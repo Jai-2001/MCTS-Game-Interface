@@ -25,10 +25,10 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public OnePlayerManager(int scoreLimit, boolean isBlack) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), 5, 82,3,  new Random());//ASCII uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), Integer.MAX_VALUE, 81,5,  new Random());//ASCII uses this
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), Integer.MAX_VALUE, 82, 10, new Random());//GUI uses this
+        this(scoreLimit, isBlack, 50, Integer.MAX_VALUE, 6400, 5, new Random());//GUI uses this
         this.view = view;
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, Random rng){
@@ -71,11 +71,6 @@ public class OnePlayerManager extends GoViewController {
                 track = true;
             } else{
                 track = this.model.tryMove(compMove[0], compMove[1]);
-                    if(this.treeSearch.isWinningMove()){
-                        this.model.placeStone(this.model.getCurrentTurn().getCurrentPlayer());
-                        this.model.moveWasValid = true;
-                        track = true;
-                    }
             }
         } while(!track);
     }

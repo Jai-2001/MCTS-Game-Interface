@@ -3,6 +3,8 @@ package uk.ac.rhul.CS3821_GO;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static uk.ac.rhul.CS3821_GO.EndStates.*;
+
 public class MonteCarloTreeSearch {
     private final int scoreLimit;
     private final double explorationConfidence;
@@ -14,7 +16,6 @@ public class MonteCarloTreeSearch {
     private final int rollOuts;
     private final int iterations;
     private ArrayList<int[]> moveList;
-    private boolean winningMove;
 
     public MonteCarloTreeSearch(int scoreLimit, boolean isBlack){
         this(scoreLimit, 50000, 20, 180, new Random(), isBlack, 5);
@@ -47,15 +48,22 @@ public class MonteCarloTreeSearch {
     }
 
     public void moveTaken(int[] taken){
-        GoNode candidate;
+        GoNode candidate = null;
         this.moveList.add(taken);
+        HashSet<GoNode> falsePredictions = new HashSet<>();
         ArrayList<int[]> moves = new ArrayList<>(this.moveList);
-        Stream<GoNode> candidatesStream = this.shiftingRoot.getChildren().stream().filter(
-                i -> i.getMoves().subList(0, moves.size()) == moves);
-            if(candidatesStream.findFirst().isPresent()){
-                candidatesStream = candidatesStream.sorted(Comparator.comparingDouble(GoNode::getVisits));
-                candidate = candidatesStream.findFirst().get();
-            } else {
+            next: for (GoNode i : this.shiftingRoot.getChildren()) {
+                List<int[]> subMoves = i.getMoves().subList(0, moves.size());
+                    for (int j = 0; j < subMoves.size(); j++) {
+                        if (subMoves.get(j)[0] != moves.get(j)[0] || subMoves.get(j)[1] != moves.get(j)[1]) {
+                            falsePredictions.add(i);
+                            continue next;
+                        }
+                    }
+            }
+            this.shiftingRoot.getChildren().removeAll(falsePredictions);
+            candidate = select(this.shiftingRoot);
+            if(candidate == this.shiftingRoot){
                 candidate = new GoNode();
                 candidate.setMoves(moves);
                 this.shiftingRoot.add(candidate);
@@ -68,7 +76,7 @@ public class MonteCarloTreeSearch {
         GoNode leaf;
             for (int i = 0; i < iterations; i++) {
                 leaf = UCB(this.shiftingRoot);
-                GoNode lastLeaf = leaf;
+                GoNode lastLeaf;
                 if (leaf.getVisits() <= this.moveList.size()) {
                     do {
                         lastLeaf = leaf;
@@ -78,8 +86,11 @@ public class MonteCarloTreeSearch {
                 for (int j = 0; j < this.rollOuts; j++) {
                     GoModel simModel = presimulate(leaf.getMoves(), this.moveList.size());
                     GoNode terminates = rollOut(leaf, simModel);
-                    backpropagate(this.shiftingRoot, terminates, simModel);
+                    if (terminates != leaf){
+                        backpropagate(this.shiftingRoot, terminates, simModel);
+                    }
                 }
+//                System.out.printf("\n%d\n", i);
             }
         leaf = select(this.shiftingRoot);
         int[] bestMove =  leaf.getMoves().get(this.moveList.size());
@@ -87,17 +98,18 @@ public class MonteCarloTreeSearch {
     }
 
     public GoNode UCB(GoNode current) {
-        double bestScore = Double.NEGATIVE_INFINITY;
+        double bestScore = Integer.MIN_VALUE;
         GoNode bestNode = current;
         ArrayList<GoNode> children = current.getChildren();
+        Collections.shuffle(children);
         for (GoNode child : children) {
-            double score = child.getScore()/child.getMoves().size();
-            double ratio = current.getVisits()/child.getVisits();
-            if (child.getVisits() == 0){
-                ratio = Double.POSITIVE_INFINITY;  //division by 0 is NaN, but we want to treat 1/0 as infinite
-                score = 0;
-            }
-            score += (this.explorationConfidence * Math.sqrt(Math.log(ratio)));
+            double score = child.getScore();
+            double ratio = Math.log(current.getVisits())/child.getVisits();
+//            if (child.getVisits() == 0){
+//                ratio = Double.POSITIVE_INFINITY;  //division by 0 is NaN, but we want to treat 1/0 as infinite
+//                score = 0;
+//            }
+            score += (this.explorationConfidence * Math.sqrt(ratio));
 
             if (score > bestScore) {
                 bestScore = score;
@@ -108,47 +120,55 @@ public class MonteCarloTreeSearch {
     }
 
     private GoNode select(GoNode initial) {
-        double visits = Double.NEGATIVE_INFINITY;
         GoNode selection = initial;
         Collections.shuffle(selection.getChildren(), this.rng);
         for (GoNode promising: initial.getChildren()) {
-            if(promising.getEndState() == EndStates.WON){
-                this.winningMove = true;
+            if(promising.getEndState() == WON) {
                 return promising;
             }
-            if(promising.getVisits() > visits){
-                selection = promising;
-                visits = selection.getVisits();
-            }
         }
-        return selection;
+        return UCB(initial);
     }
 
     private GoNode rollOut(GoNode start, GoModel simModel) {
         ArrayList<int[]> runningMoves = start.getMoves();
         GoNode ball = start;
-        int retryCount = 0;
         int depth = this.searchDepth;
-        while (ball.getEndState() == EndStates.RUNNING && depth >= 0){
-            int[] newMove = randomMove(simModel);
+        deep: while (ball.getEndState() == RUNNING && depth >= 0){
+
             ArrayList<int[]> uniqueMoves = new ArrayList<>();
                 for (GoNode uniqueChild: start.getChildren()) {
-                    uniqueMoves.add(uniqueChild.getMoves().get(this.moveList.size()));
+                    uniqueMoves.add(uniqueChild.getMoves().get(start.getMoves().size()));
                 }
-                if(uniqueMoves.stream().anyMatch((int[] i) -> Arrays.equals(i, newMove))){
-                    if (retryCount <= this.rollOuts){
-                        retryCount++;
-                        continue;
-                    } else{
+            int[] newMove;
+            boolean hasBeenDone;
+            int tries = 0;
+            do {
+                hasBeenDone = false;
+                newMove = randomMove(simModel);
+                for (int[] unique : uniqueMoves) {
+                    if (unique[0] == newMove[0] && unique[1] == newMove[1]) {
+                        hasBeenDone = true;
                         break;
                     }
                 }
+                tries++;
+                if(tries > this.rollOuts){
+                    GoNode cannon = ball;
+                    while(cannon != start){
+                        cannon = cannon.getParent();
+                        if (cannon != null) cannon.getChildren().removeIf((i)->true);
+                    }
+                    return start;
+                }
+            } while (hasBeenDone);
             runningMoves = new ArrayList<>(runningMoves);
             runningMoves.add(newMove);
             simModel.nextTurn();
             GoNode nextBall = new GoNode(someoneWon(simModel), null);
             nextBall.setMoves(runningMoves);
             nextBall.setParent(ball);
+            ball.incrementVisits();
             ball.add(nextBall);
             ball = nextBall;
             depth--;
@@ -157,11 +177,16 @@ public class MonteCarloTreeSearch {
     }
 
     private void backpropagate(GoNode start, GoNode ball, GoModel simModel) {
-        int[] indices = indices();
         start.incrementVisits();
-        if(ball.getEndState()!=EndStates.RUNNING) {
-            double score = ((double) 1 + simModel.countPoints()[indices[0]])/((double)1 + simModel.countPoints()[indices[1]]);
-            score = score / ball.getMoves().size();
+        if(ball.getEndState()!= RUNNING) {
+            double score;
+                switch (ball.getEndState()){
+                    case WON : score = 1;
+                    break;
+                    case LOST: score = -100;
+                    break;
+                    default: score = 0;
+                }
             start.setScore(start.getScore() + score);
             while (ball != start) {
                 ball.incrementVisits();
@@ -172,18 +197,10 @@ public class MonteCarloTreeSearch {
     }
 
     private int[] randomMove(GoModel simModel) {
-        int[] move = new int[2];
-        int[] indices = this.rng.ints(200,0, 81).distinct().limit(82).toArray();
-        for (int index : indices) {
-            move = GoLegalMoves.movesArray[index];
-            if(move[0] == -1) {
-                simModel.moveWasValid = true;
-            } else{
-                if (simModel.tryMove(move[0],move[1])){
-                    break;
-                }
-            }
-        }
+        int[] move ;
+            do{
+                move = GoLegalMoves.movesArray[(int) (this.rng.nextDouble() * 81)];//all hell has broken loose if this fails.
+            } while (!simModel.tryMove(move[0], move[1]));
         return move;
     }
 
@@ -201,15 +218,11 @@ public class MonteCarloTreeSearch {
         int[] indices = indices();
         int[] points = model.countPoints();
         if(points[indices[1]] >= scoreLimit){
-            return EndStates.LOST;
+            return LOST;
         } else if (points[indices[0]] >= scoreLimit){
-            return EndStates.WON;
+            return WON;
         } else{
-            return EndStates.RUNNING;
+            return RUNNING;
         }
-    }
-
-    public boolean isWinningMove() {
-        return winningMove;
     }
 }

@@ -19,7 +19,10 @@ public class TreeSearchTest {
         GoNode childB = new GoNode();
         GoNode root = new GoNode();
         root.incrementVisits();
+        root.incrementVisits();
         childA.incrementVisits();
+        childA.incrementVisits();
+        childB.incrementVisits();
         childB.setScore(1);
         root.add(childA);
         root.add(childB);
@@ -30,7 +33,7 @@ public class TreeSearchTest {
     @Test
     void testNestedSelection() {
         MonteCarloTreeSearch nestedGame =
-                new MonteCarloTreeSearch(1,  1, 7, 82, new Random(111), true, 1);
+                new MonteCarloTreeSearch(1,  1, 1, 82, new Random(111), true, 5);
         GoNode childAA = new GoNode(EndStates.LOST, null);
         GoNode childA = new GoNode(EndStates.RUNNING, new ArrayList<GoNode>(List.of(childAA)));
         GoNode childBA = new GoNode(EndStates.LOST, null);
@@ -41,7 +44,12 @@ public class TreeSearchTest {
         root.incrementVisits();
         root.incrementVisits();
         childA.incrementVisits();
+        childA.incrementVisits();
         childBA.incrementVisits();
+        childBA.incrementVisits();
+        childB.incrementVisits();
+        childBB.incrementVisits();
+        childBB.setScore(1);
         GoNode intermediate = nestedGame.UCB(root);
         Assertions.assertEquals(childBB, nestedGame.UCB(intermediate));
     }
@@ -49,7 +57,7 @@ public class TreeSearchTest {
     @Test
     void testRollOuts(){
         MonteCarloTreeSearch autonomous =
-                new MonteCarloTreeSearch(1,  1, 1, 82, new Random(189219), false, 2);
+                new MonteCarloTreeSearch(1,  1, 0, 82, new Random(189219), false, 1);
         autonomous.moveTaken(new int[]{0, 0});
         autonomous.moveTaken(new int[]{0, 1});
         autonomous.moveTaken(new int[]{-1, -1});
