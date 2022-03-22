@@ -14,18 +14,20 @@ public class GoWindowView implements View{
     public static void main(String[] args) {
         GoWindowView view = new GoWindowView();
         view.go();
-        OnePlayerManager controller = new OnePlayerManager(1, true, view);
+        int scoreLimit = args.length >= 1? Integer.parseInt(args[0]) : 1;
+        boolean onePlayer = args.length < 1 || args[1].equals("1");
+        OnePlayerManager controller = new OnePlayerManager(scoreLimit, onePlayer, view);
             do {
                 controller.inputMove(new Scanner(new ByteArrayInputStream("".getBytes())));
                 LockSupport.unpark(view.app);
                 controller.updateBoardState();
                 if(controller.someoneWon()) break;
-                for (int i = 0; i <1; i++) {
+                if(onePlayer)  {
                     controller.play();
+                    System.out.println("next move!");
+                    controller.updateBoardState();
                 }
-                System.out.println("next move!");
-                controller.updateBoardState();
-            } while (!controller.someoneWon() && !controller.hasEnded());
+            } while (!controller.someoneWon());
             int[] scores =  controller.model.countPoints();
             String winner = scores[0] > scores[1] ? "Black" : "White";
             view.promptInput(winner, new String[]{"won","0"},null);
