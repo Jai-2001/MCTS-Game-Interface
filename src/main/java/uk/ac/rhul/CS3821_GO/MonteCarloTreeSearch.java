@@ -17,7 +17,7 @@ public class MonteCarloTreeSearch {
     private ArrayList<int[]> moveList;
 
     public MonteCarloTreeSearch(int scoreLimit, boolean isBlack){
-        this(scoreLimit, 50000, 20, 180, new Random(), isBlack, 5);
+        this(scoreLimit, 50000, 20, 81, new Random(), isBlack, 5);
     }
 
     public MonteCarloTreeSearch(int scoreLimit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations) {
@@ -27,7 +27,7 @@ public class MonteCarloTreeSearch {
         this.rng = rng;
         this.isBlack = isBlack;
         this.rollOuts = rollouts;
-        this.iterations = iterations;
+        this.iterations = (iterations/scoreLimit) + 1;
         this.logRoot = new GoNode();
         this.shiftingRoot = logRoot;
         this.moveList = new ArrayList<>();
@@ -66,8 +66,8 @@ public class MonteCarloTreeSearch {
                 candidate = new GoNode();
                 candidate.setMoves(moves);
                 this.shiftingRoot.add(candidate);
-                candidate.setParent(this.shiftingRoot);
             }
+        candidate.setParent(null);
         this.shiftingRoot = candidate;
     }
 
@@ -103,7 +103,7 @@ public class MonteCarloTreeSearch {
             double ratio = Math.log(current.getVisits())/child.getVisits();
             score += (this.explorationConfidence * Math.sqrt(ratio));
 
-            if (score > bestScore) {
+            if (score >= bestScore) {
                 bestScore = score;
                 bestNode = child;
             }
@@ -191,7 +191,7 @@ public class MonteCarloTreeSearch {
                 switch (ball.getEndState()){
                     case WON : score = 1;
                     break;
-                    case LOST: score = -100;
+                    case LOST: score = -1;
                     break;
                     default: score = 0;
                 }

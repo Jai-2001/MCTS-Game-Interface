@@ -36,7 +36,7 @@ class OnePlayerTest {
 
     @Test
     void testPlayerStart() {
-        testGame = new OnePlayerManager(10,false,1,21,50,1,new Random());
+        testGame = new OnePlayerManager(1,false,1,21,50,2,new Random());
         String pStart = "1,1\r\n1,1\r\np\r\n";
         ByteArrayInputStream playerStream = new ByteArrayInputStream(pStart.getBytes());
         Scanner scanPlay = new Scanner(playerStream);
