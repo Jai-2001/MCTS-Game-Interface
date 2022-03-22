@@ -4,7 +4,7 @@ import java.util.*;
 
 public class OnePlayerManager extends GoViewController {
 
-    private MonteCarloTreeSearch treeSearch;
+    private final MonteCarloTreeSearch treeSearch;
 
     public static void main(String[] args) {
         int scoreLimit = 5;

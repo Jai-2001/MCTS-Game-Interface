@@ -3,13 +3,13 @@ package uk.ac.rhul.CS3821_GO;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoModel {
+public class GoModel implements GameModel {
 
     final static int BOARD_SIZE_X = 9;
     final static int BOARD_SIZE_Y = 9;
 
-    private TurnState currentPlayerTurn;
-    private StoneMap board;
+    private final TurnState currentPlayerTurn;
+    private final StoneMap board;
     boolean moveWasValid;
     private int lastGroup;
     private int lastX;
@@ -32,6 +32,7 @@ public class GoModel {
         return this.currentPlayerTurn;
     }
 
+    @Override
     public void nextTurn() {
         PlayerModel currentPlayer = this.currentPlayerTurn.getCurrentPlayer();
         PlayerModel previousPlayer = this.currentPlayerTurn.getPreviousPlayer();
@@ -96,8 +97,7 @@ public class GoModel {
                toRemove.add(index);
             }
         }
-        for (int i = 0; i < toRemove.size(); i++) {
-            int groupIndex = toRemove.get(i);
+        for (int groupIndex : toRemove) {
             player.incrementConcededPoints(groups.getGroupStones(groupIndex).length);
             groups.clearGroup(groupIndex);
         }
@@ -107,6 +107,7 @@ public class GoModel {
         return this.board.copy();
     }
 
+    @Override
     public boolean tryMove(int xPos, int yPos){
         if (xPos == -1 || this.board.checkMove(xPos, yPos, currentPlayerTurn)){
             this.moveWasValid = true;
@@ -116,14 +117,10 @@ public class GoModel {
         return false;
     }
 
+    @Override
     public int[] countPoints() {
         TurnState turn = this.getCurrentTurn();
         return new int[]{turn.getWhite().getConcededPoints(), turn.getBlack().getConcededPoints()};
-    }
-
-    public void force(){
-        this.lastX = -1024;
-        this.lastY = this.lastX;
     }
 
     public Intersection getWagered(){

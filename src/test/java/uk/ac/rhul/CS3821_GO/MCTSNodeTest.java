@@ -9,13 +9,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GoNodeTest {
+class MCTSNodeTest {
 
-    GoNode root;
+    MCTSNode root;
 
     @BeforeEach
     void setUp() {
-        root = new GoNode();
+        root = new MCTSNode();
     }
 
     @AfterEach
@@ -25,11 +25,11 @@ class GoNodeTest {
 
     @Test
     void testTraversal(){
-        GoNode childOne = new GoNode();
-        GoNode childTwo = new GoNode();
+        MCTSNode childOne = new MCTSNode();
+        MCTSNode childTwo = new MCTSNode();
         root.add(childOne);
         root.add(childTwo);
-        ArrayList<GoNode> children = root.getChildren();
+        ArrayList<MCTSNode> children = root.getChildren();
         assertTrue(children.contains(childOne));
         assertTrue(children.contains(childTwo));
     }
@@ -37,7 +37,7 @@ class GoNodeTest {
     @Test
     void testPayloads(){
         root.setMoves(new ArrayList(List.of(new int[]{1, 1})));
-        GoNode child = new GoNode();
+        MCTSNode child = new MCTSNode();
         child.setMoves(new ArrayList<>(List.of(new int[]{1,1}, new int[]{2,2})));
         assertArrayEquals(root.getMoves().get(0), new int[]{1, 1});
         assertArrayEquals(child.getMoves().get(0), new int[]{1, 1});

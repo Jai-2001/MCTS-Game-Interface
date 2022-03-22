@@ -2,16 +2,16 @@ package uk.ac.rhul.CS3821_GO;
 
 import java.util.ArrayList;
 
-public class GoNode{
+public class MCTSNode {
 
-    private GoNode parent;
-    private ArrayList<GoNode> children;
+    private MCTSNode parent;
+    private ArrayList<MCTSNode> children;
     private ArrayList<int[]> moveList;
-    private EndStates endState;
+    private final EndStates endState;
     private double visits;
     private double score;
 
-    GoNode() {
+    MCTSNode() {
         this.children = null;
         this.moveList = null;
         this.endState = EndStates.RUNNING;
@@ -19,7 +19,7 @@ public class GoNode{
         this.score = 0;
     }
 
-    GoNode(EndStates state, ArrayList<GoNode> children){
+    MCTSNode(EndStates state, ArrayList<MCTSNode> children){
         this.children = children;
         this.moveList = null;
         this.endState = state;
@@ -27,14 +27,14 @@ public class GoNode{
         this.score = 0;
     }
 
-    public void add(GoNode child){
+    public void add(MCTSNode child){
             if(this.children == null){
                 this.children = new ArrayList<>();
             }
         this.children.add(child);
     }
 
-    public ArrayList<GoNode> getChildren(){
+    public ArrayList<MCTSNode> getChildren(){
         return this.children == null ? new ArrayList<>() : this.children;
     }
 
@@ -66,11 +66,11 @@ public class GoNode{
         this.score = score;
     }
 
-    public GoNode getParent() {
+    public MCTSNode getParent() {
         return parent;
     }
 
-    public void setParent(GoNode parent) {
+    public void setParent(MCTSNode parent) {
         this.parent = parent;
     }
 }

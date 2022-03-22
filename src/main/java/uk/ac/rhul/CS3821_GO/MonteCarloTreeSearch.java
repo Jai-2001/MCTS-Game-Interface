@@ -5,13 +5,11 @@ import java.util.*;
 import static uk.ac.rhul.CS3821_GO.EndStates.*;
 
 public class MonteCarloTreeSearch {
-    private final int scoreLimit;
     private final double explorationConfidence;
     private final int searchDepth;
-    private GoNode shiftingRoot;
-    private final GoNode logRoot;
+    private final GameMCTSInterface gameInterface;
+    private MCTSNode shiftingRoot;
     private final Random rng;
-    private final boolean isBlack;
     private final int rollOuts;
     private final int iterations;
     private ArrayList<int[]> moveList;
@@ -21,66 +19,30 @@ public class MonteCarloTreeSearch {
     }
 
     public MonteCarloTreeSearch(int scoreLimit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations) {
-        this.scoreLimit = scoreLimit;
         this.explorationConfidence = confidence;
         this.searchDepth = depth;
         this.rng = rng;
-        this.isBlack = isBlack;
+        this.gameInterface = new GoMCTSInterface(this, isBlack, scoreLimit, rng);
         this.rollOuts = rollouts;
         this.iterations = (iterations/scoreLimit) + 1;
-        this.logRoot = new GoNode();
-        this.shiftingRoot = logRoot;
+        this.shiftingRoot = new MCTSNode();
         this.moveList = new ArrayList<>();
     }
 
-    static GoModel presimulate(ArrayList<int[]> moveList, int limit){
-        GoModel simModel = new GoModel();
-        limit = limit == 0 ? moveList.size() : limit;
-        for (int i = 0; i < limit; i++) {
-            int[] move = moveList.get(i);
-            if(move[0] != -1){
-                simModel.tryMove(move[0], move[1]);
-            }
-            simModel.nextTurn();
-        }
-        return simModel;
-    }
-
     public void moveTaken(int[] taken){
-        GoNode candidate = null;
-        this.moveList.add(taken);
-        HashSet<GoNode> falsePredictions = new HashSet<>();
-        ArrayList<int[]> moves = new ArrayList<>(this.moveList);
-            next: for (GoNode i : this.shiftingRoot.getChildren()) {
-                List<int[]> subMoves = i.getMoves().subList(0, moves.size());
-                    for (int j = 0; j < subMoves.size(); j++) {
-                        if (subMoves.get(j)[0] != moves.get(j)[0] || subMoves.get(j)[1] != moves.get(j)[1]) {
-                            falsePredictions.add(i);
-                            continue next;
-                        }
-                    }
-            }
-            this.shiftingRoot.getChildren().removeAll(falsePredictions);
-            candidate = select(this.shiftingRoot);
-            if(candidate == this.shiftingRoot){
-                candidate = new GoNode();
-                candidate.setMoves(moves);
-                this.shiftingRoot.add(candidate);
-            }
-        candidate.setParent(null);
-        this.shiftingRoot = candidate;
+        gameInterface.moveTaken(taken);
     }
 
     public int[] path(){
-        GoNode leaf;
+        MCTSNode leaf;
             for (int i = 0; i < iterations; i++) {
                 leaf = UCB(this.shiftingRoot);
                 for (int j = 0; j < this.rollOuts; j++) {
-                    GoModel simModel = presimulate(leaf.getMoves(),0);
-                    GoNode terminates = rollOut(leaf, simModel);
+                    GameModel simModel = this.gameInterface.presimulate(leaf.getMoves(), 0);
+                    MCTSNode terminates = rollOut(leaf, simModel);
                     if (terminates != leaf){
-                        GoNode parent = getParentSafe(leaf);
-                        backpropagate(parent, terminates, simModel);
+                        MCTSNode parent = getParentSafe(leaf);
+                        backpropagate(parent, terminates);
                     }
                 }
             }
@@ -89,92 +51,90 @@ public class MonteCarloTreeSearch {
         return bestMove;
     }
 
-    private GoNode getParentSafe(GoNode leaf) {
+    private MCTSNode getParentSafe(MCTSNode leaf) {
         return leaf.getParent() == null ? this.shiftingRoot : leaf.getParent();
     }
 
-    public GoNode UCB(GoNode current) {
+    public MCTSNode UCB(MCTSNode current) {
         double bestScore = Integer.MIN_VALUE;
-        GoNode bestNode = current;
-        ArrayList<GoNode> children = current.getChildren();
+        MCTSNode bestNode = current;
+        ArrayList<MCTSNode> children = current.getChildren();
         Collections.shuffle(children);
-        for (GoNode child : children) {
-            double score = child.getScore();
-            double ratio = Math.log(current.getVisits())/child.getVisits();
-            score += (this.explorationConfidence * Math.sqrt(ratio));
+            for (MCTSNode child : children) {
+                double score = child.getScore();
+                double ratio = Math.log(current.getVisits())/child.getVisits();
+                score += (this.explorationConfidence * Math.sqrt(ratio));
 
-            if (score >= bestScore) {
-                bestScore = score;
-                bestNode = child;
+                    if (score >= bestScore) {
+                        bestScore = score;
+                        bestNode = child;
+                    }
             }
-        }
         return bestNode;
     }
 
-    private GoNode select(GoNode initial) {
-        GoNode selection = initial;
-        Collections.shuffle(selection.getChildren(), this.rng);
+    protected MCTSNode select(MCTSNode initial) {
+        Collections.shuffle(initial.getChildren(), this.rng);
         int[] preventativeMove = null;
-        for (GoNode promising: initial.getChildren()) {
-            if(preventativeMove != null){
-                if (Arrays.equals(preventativeMove, promising.getMoves().get(initial.getMoves().size()))){
+            for (MCTSNode promising: initial.getChildren()) {
+                if(preventativeMove != null){
+                    if (Arrays.equals(preventativeMove, promising.getMoves().get(initial.getMoves().size()))){
+                        return promising;
+                    }
+                } else if(promising.getEndState() == WON) {
                     return promising;
                 }
-            } else if(promising.getEndState() == WON) {
-                return promising;
+                Optional<MCTSNode> losingCapture = promising.getChildren().stream().filter((i) -> i.getEndState()== LOST).findFirst();
+                if (losingCapture.isPresent()){
+                    preventativeMove = losingCapture.get().getMoves().get(initial.getMoves().size()+1);
+                }
             }
-            Optional<GoNode> losingCapture = promising.getChildren().stream().filter((i) -> i.getEndState()== LOST).findFirst();
-            if (losingCapture.isPresent()){
-                preventativeMove = losingCapture.get().getMoves().get(initial.getMoves().size()+1);
+            if (preventativeMove!=null){
+                MCTSNode prescient = new MCTSNode(RUNNING, null);
+                ArrayList<int[]> prescientMoves = new ArrayList<>(initial.getMoves());
+                prescientMoves.add(preventativeMove);
+                prescient.setMoves(prescientMoves);
+                prescient.setParent(initial);
+                return prescient;
             }
-        }
-        if (preventativeMove!=null){
-            GoNode prescient = new GoNode(RUNNING, null);
-            ArrayList<int[]> prescientMoves = new ArrayList<>(initial.getMoves());
-            prescientMoves.add(preventativeMove);
-            prescient.setMoves(prescientMoves);
-            prescient.setParent(initial);
-            return prescient;
-        }
         return UCB(initial);
     }
 
-    private GoNode rollOut(GoNode start, GoModel simModel) {
+    private MCTSNode rollOut(MCTSNode start, GameModel simModel) {
         ArrayList<int[]> runningMoves = start.getMoves();
-        GoNode ball = start;
+        MCTSNode ball = start;
         int depth = this.searchDepth;
-        deep: while (ball.getEndState() == RUNNING && depth >= 0){
-
-            ArrayList<int[]> uniqueMoves = new ArrayList<>();
-                for (GoNode uniqueChild: ball.getChildren()) {
-                    uniqueMoves.add(uniqueChild.getMoves().get(ball.getMoves().size()));
-                }
-            int[] newMove;
-            boolean hasBeenDone;
-            int tries = 0;
-            do {
-                hasBeenDone = false;
-                newMove = randomMove(simModel);
-                for (int[] unique : uniqueMoves) {
-                    if (unique[0] == newMove[0] && unique[1] == newMove[1]) {
-                        hasBeenDone = true;
-                        break;
+            while (ball.getEndState() == RUNNING && depth >= 0){
+                ArrayList<int[]> uniqueMoves = new ArrayList<>();
+                    for (MCTSNode uniqueChild: ball.getChildren()) {
+                        uniqueMoves.add(uniqueChild.getMoves().get(ball.getMoves().size()));
                     }
-                }
-                tries++;
-                if(tries > this.rollOuts){
-                    GoNode cannon = ball;
-                    while(cannon != start){
-                        cannon = cannon.getParent();
-                        if (cannon != null) cannon.getChildren().removeIf((i)->true);
-                    }
-                    return start;
-                }
-            } while (hasBeenDone);
+                int[] newMove;
+                boolean hasBeenDone;
+                int tries = 0;
+                    do {
+                        hasBeenDone = false;
+                        newMove = gameInterface.randomMove(simModel);
+                            for (int[] unique : uniqueMoves) {
+                                if (unique[0] == newMove[0] && unique[1] == newMove[1]) {
+                                    hasBeenDone = true;
+                                    break;
+                                }
+                            }
+                        tries++;
+                        if(tries > this.rollOuts){
+                            MCTSNode cannon = ball;
+                            while(cannon != start){
+                                cannon = cannon.getParent();
+                                if (cannon != null) cannon.getChildren().removeIf((i)->true);
+                            }
+                            return start;
+                        }
+                    } while (hasBeenDone);
             runningMoves = new ArrayList<>(runningMoves);
             runningMoves.add(newMove);
             simModel.nextTurn();
-            GoNode nextBall = new GoNode(someoneWon(simModel), null);
+            MCTSNode nextBall = new MCTSNode(gameInterface.someoneWon(simModel), null);
             nextBall.setMoves(runningMoves);
             nextBall.setParent(ball);
             ball.add(nextBall);
@@ -184,53 +144,36 @@ public class MonteCarloTreeSearch {
         return ball;
     }
 
-    private void backpropagate(GoNode start, GoNode ball, GoModel simModel) {
+    private void backpropagate(MCTSNode start, MCTSNode ball) {
         start.incrementVisits();
-        if(ball.getEndState()!= RUNNING) {
-            double score;
-                switch (ball.getEndState()){
-                    case WON : score = 1;
-                    break;
-                    case LOST: score = -1;
-                    break;
-                    default: score = 0;
+            if(ball.getEndState()!= RUNNING) {
+                double score = switch (ball.getEndState()) {
+                    case WON -> 1;
+                    case LOST -> -1;
+                    default -> 0;
+                };
+                start.setScore(start.getScore() + score);
+                while (ball != start) {
+                    ball.incrementVisits();
+                    ball.setScore(ball.getScore() + score);
+                    ball = ball.getParent();
                 }
-            start.setScore(start.getScore() + score);
-            while (ball != start) {
-                ball.incrementVisits();
-                ball.setScore(ball.getScore() + score);
-                ball = ball.getParent();
             }
-        }
-    }
-
-    private int[] randomMove(GoModel simModel) {
-        int[] move;
-            do{
-                move = GoLegalMoves.movesArray[(int) (this.rng.nextDouble() * 82)];
-            } while (!simModel.tryMove(move[0], move[1]));
-        return move;
-    }
-
-    private int[] indices(){
-        int compIndex = 1;
-        int humanIndex = 0;
-        if(isBlack){
-            compIndex = 0;
-            humanIndex = 1;
-        }
-        return new int[]{compIndex,humanIndex};
     }
 
     public EndStates someoneWon(GoModel model){
-        int[] indices = indices();
-        int[] points = model.countPoints();
-        if(points[indices[1]] >= scoreLimit){
-            return LOST;
-        } else if (points[indices[0]] >= scoreLimit){
-            return WON;
-        } else{
-            return RUNNING;
-        }
+        return gameInterface.someoneWon(model);
+    }
+
+    public MCTSNode getShiftingRoot() {
+        return this.shiftingRoot;
+    }
+
+    public void setShiftingRoot(MCTSNode candidate) {
+        this.shiftingRoot = candidate;
+    }
+
+    public Collection<int[]> getMoveList() {
+        return this.moveList;
     }
 }

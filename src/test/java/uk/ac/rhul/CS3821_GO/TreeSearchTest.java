@@ -15,9 +15,9 @@ public class TreeSearchTest {
     @Test
     void testOptimalSelection() {
         MonteCarloTreeSearch traversal = new MonteCarloTreeSearch(1, true);
-        GoNode childA = new GoNode();
-        GoNode childB = new GoNode();
-        GoNode root = new GoNode();
+        MCTSNode childA = new MCTSNode();
+        MCTSNode childB = new MCTSNode();
+        MCTSNode root = new MCTSNode();
         root.incrementVisits();
         root.incrementVisits();
         childA.incrementVisits();
@@ -34,13 +34,13 @@ public class TreeSearchTest {
     void testNestedSelection() {
         MonteCarloTreeSearch nestedGame =
                 new MonteCarloTreeSearch(1,  1, 1, 82, new Random(111), true, 5);
-        GoNode childAA = new GoNode(EndStates.LOST, null);
-        GoNode childA = new GoNode(EndStates.RUNNING, new ArrayList<GoNode>(List.of(childAA)));
-        GoNode childBA = new GoNode(EndStates.LOST, null);
-        GoNode childBB = new GoNode(EndStates.WON, null);
-        GoNode childB = new GoNode(EndStates.RUNNING, new ArrayList<GoNode>(List.of(childBA, childBB)));
+        MCTSNode childAA = new MCTSNode(EndStates.LOST, null);
+        MCTSNode childA = new MCTSNode(EndStates.RUNNING, new ArrayList<MCTSNode>(List.of(childAA)));
+        MCTSNode childBA = new MCTSNode(EndStates.LOST, null);
+        MCTSNode childBB = new MCTSNode(EndStates.WON, null);
+        MCTSNode childB = new MCTSNode(EndStates.RUNNING, new ArrayList<MCTSNode>(List.of(childBA, childBB)));
         childB.setScore(1.0);
-        GoNode root = new GoNode(EndStates.RUNNING, new ArrayList<GoNode>(List.of(childA, childB)));
+        MCTSNode root = new MCTSNode(EndStates.RUNNING, new ArrayList<MCTSNode>(List.of(childA, childB)));
         root.incrementVisits();
         root.incrementVisits();
         childA.incrementVisits();
@@ -50,7 +50,7 @@ public class TreeSearchTest {
         childB.incrementVisits();
         childBB.incrementVisits();
         childBB.setScore(1);
-        GoNode intermediate = nestedGame.UCB(root);
+        MCTSNode intermediate = nestedGame.UCB(root);
         Assertions.assertEquals(childBB, nestedGame.UCB(intermediate));
     }
 
