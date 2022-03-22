@@ -3,8 +3,8 @@ package uk.ac.rhul.CS3821_GO;
 public class TurnState {
     private PlayerModel current;
     private PlayerModel previous;
-    private PlayerModel black;
-    private PlayerModel white;
+    private final PlayerModel black;
+    private final PlayerModel white;
 
     TurnState(){
         this.current = new PlayerModel(StoneTypes.BLACK);

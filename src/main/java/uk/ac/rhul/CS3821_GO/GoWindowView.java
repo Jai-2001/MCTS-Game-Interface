@@ -59,9 +59,7 @@ public class GoWindowView implements View{
     public String promptInput(String playerName, String[] scores, Scanner inputBuffer) {
         CompletableFuture<String> question = GoWindow.getQuestion();
         int[][] board = this.board;
-        Platform.runLater(() -> {
-            GoWindow.refresh(board,scores, playerName);
-        });
+        Platform.runLater(() -> GoWindow.refresh(board,scores, playerName));
         String answer;
         try {
             answer = question.get();

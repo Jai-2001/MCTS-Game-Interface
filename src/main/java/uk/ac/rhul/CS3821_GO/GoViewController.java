@@ -7,9 +7,9 @@ public class GoViewController {
     public static void main(String[] args) {
         GoViewController game = new GoViewController();
         Scanner inputBuffer = new Scanner(System.in);
-        do{
-            game.inputMove(inputBuffer);
-        } while (game.updateBoardState());
+            do{
+                game.inputMove(inputBuffer);
+            } while (game.updateBoardState());
     }
 
     protected GoModel model;
@@ -38,8 +38,8 @@ public class GoViewController {
 
     public void inputMove(Scanner inputBuffer) {
         this.view.printBoard(getIntBoard());
-        int moveX = -1;
-        int moveY = -1;
+        int moveX;
+        int moveY;
         String playerName = "Black";
         TurnState turn = this.model.getCurrentTurn();
         if (turn.getCurrentPlayer() == turn.getWhite()){

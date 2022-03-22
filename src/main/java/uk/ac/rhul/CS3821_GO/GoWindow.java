@@ -21,12 +21,12 @@ import java.util.concurrent.locks.LockSupport;
 
 public class GoWindow extends Application {
 
-    private static GridPane grid = new GridPane();
-    private static Text info = new Text();
-    private static VBox playWin = new VBox(grid, info);
+    private final static GridPane grid = new GridPane();
+    private final static Text info = new Text();
+    private final static VBox playWin = new VBox(grid, info);
     private static String response;
     private static CompletableFuture<String> question;
-    private static Scene scene = new Scene(playWin);
+    private final static Scene scene = new Scene(playWin);
 
     @Override
     public void start(Stage primaryStage){
@@ -89,7 +89,7 @@ public class GoWindow extends Application {
         return question;
     }
 
-    static EventHandler<MouseEvent> clickHandler = new EventHandler<MouseEvent>() {
+    static EventHandler<MouseEvent> clickHandler = new EventHandler<>() {
         @Override
         public void handle(MouseEvent e) {
             response = (1 + (int) e.getSceneX()/64)+ "," + (1 +  (int)e.getSceneY()/64);

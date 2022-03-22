@@ -2,8 +2,8 @@ package uk.ac.rhul.CS3821_GO;
 
 public class Intersection {
     private StoneTypes stone;
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
     Intersection() {
         this.x = (int) (System.nanoTime() % Integer.MAX_VALUE);

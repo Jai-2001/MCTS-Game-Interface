@@ -2,8 +2,8 @@ package uk.ac.rhul.CS3821_GO;
 import java.lang.IllegalArgumentException;
 
 public class PlayerModel {
-    private StoneTypes type;
-    private StoneGroups stoneGroups;
+    private final StoneTypes type;
+    private final StoneGroups stoneGroups;
     private int concededPoints;
 
     PlayerModel(StoneTypes type){
