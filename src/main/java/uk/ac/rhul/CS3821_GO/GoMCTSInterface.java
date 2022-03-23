@@ -11,8 +11,7 @@ public class GoMCTSInterface implements GameMCTSInterface {
     private final int scoreLimit;
     Random rng;
 
-    public GoMCTSInterface(MonteCarloTreeSearch monteCarloTreeSearch, boolean isBlack, int scoreLimit, Random rng) {
-        this.monteCarloTreeSearch = monteCarloTreeSearch;
+    public GoMCTSInterface(boolean isBlack, int scoreLimit, Random rng) {
         this.isBlack = isBlack;
         this.scoreLimit = scoreLimit;
         this.rng = rng;

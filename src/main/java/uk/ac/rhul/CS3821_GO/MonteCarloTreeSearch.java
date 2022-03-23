@@ -22,7 +22,7 @@ public class MonteCarloTreeSearch {
         this.explorationConfidence = confidence;
         this.searchDepth = depth;
         this.rng = rng;
-        this.gameInterface = new GoMCTSInterface(this, isBlack, scoreLimit, rng);
+        this.gameInterface = new GoMCTSInterface(isBlack, scoreLimit, rng);
         this.rollOuts = rollouts;
         this.iterations = (iterations/scoreLimit) + 1;
         this.shiftingRoot = new MCTSNode();
@@ -30,7 +30,29 @@ public class MonteCarloTreeSearch {
     }
 
     public void moveTaken(int[] taken){
-        gameInterface.moveTaken(taken);
+        MCTSNode candidate;
+        this.moveList.add(taken);
+        HashSet<MCTSNode> falsePredictions = new HashSet<>();
+        ArrayList<int[]> moves = new ArrayList<>(this.moveList);
+        next:
+        for (MCTSNode i : this.shiftingRoot.getChildren()) {
+            List<int[]> subMoves = i.getMoves().subList(0, moves.size());
+            for (int j = 0; j < subMoves.size(); j++) {
+                if (subMoves.get(j)[0] != moves.get(j)[0] || subMoves.get(j)[1] != moves.get(j)[1]) {
+                    falsePredictions.add(i);
+                    continue next;
+                }
+            }
+        }
+        this.shiftingRoot.getChildren().removeAll(falsePredictions);
+        candidate = select(this.shiftingRoot);
+        if (candidate == this.shiftingRoot) {
+            candidate = new MCTSNode();
+            candidate.setMoves(moves);
+            this.shiftingRoot.add(candidate);
+        }
+        candidate.setParent(null);
+        this.shiftingRoot = candidate;
     }
 
     public int[] path(){
@@ -163,17 +185,5 @@ public class MonteCarloTreeSearch {
 
     public EndStates someoneWon(GoModel model){
         return gameInterface.someoneWon(model);
-    }
-
-    public MCTSNode getShiftingRoot() {
-        return this.shiftingRoot;
-    }
-
-    public void setShiftingRoot(MCTSNode candidate) {
-        this.shiftingRoot = candidate;
-    }
-
-    public Collection<int[]> getMoveList() {
-        return this.moveList;
     }
 }
