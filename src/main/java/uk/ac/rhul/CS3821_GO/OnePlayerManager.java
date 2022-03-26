@@ -25,10 +25,10 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public OnePlayerManager(int scoreLimit, boolean isBlack) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), 81, 81,100,  new Random());//ASCII uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 450, 35,350,  new Random());//ASCII uses this
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), 50, 81, 81, new Random());//GUI uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 450, 35, 350, new Random());//GUI uses this
         this.view = view;
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, Random rng){

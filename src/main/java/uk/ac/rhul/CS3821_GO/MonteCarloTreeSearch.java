@@ -16,7 +16,7 @@ public class MonteCarloTreeSearch {
     private ArrayList<int[]> moveList;
 
     public MonteCarloTreeSearch(int scoreLimit, boolean isBlack){
-        this(scoreLimit, 50000, 20, 81, new Random(), isBlack, 5);
+        this(scoreLimit, Math.sqrt(2.0), 450, 35, new Random(), isBlack, 350);
     }
 
     public MonteCarloTreeSearch(int scoreLimit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations) {
