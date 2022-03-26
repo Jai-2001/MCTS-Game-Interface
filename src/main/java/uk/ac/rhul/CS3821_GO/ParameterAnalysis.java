@@ -9,8 +9,8 @@ public class ParameterAnalysis {
         do {
             int limit = takeInt("Please enter a score limit:", input);
             double confidence = takeDouble("Please enter a value for exploration confidence:", input) + 0.1;
-            int depth = takeInt("Please enter a value for search depth:", input)+ 2;
-            int rolls = takeInt("Please enter a value for maximum rollouts:", input)+ 3;
+            int depth = takeInt("Please enter a value for search depth:", input);
+            int rolls = takeInt("Please enter a value for maximum rollouts:", input);
             int iterations = takeInt("Please enter a value for search iterations:", input);
             OnePlayerManager tester = new OnePlayerManager(limit, true, confidence, depth, rolls, iterations, new Random());
             GoMCTSInterface player = new GoMCTSInterface( true, limit, new Random());

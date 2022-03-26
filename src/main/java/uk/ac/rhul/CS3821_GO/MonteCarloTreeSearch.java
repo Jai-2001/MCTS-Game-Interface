@@ -1,6 +1,7 @@
 package uk.ac.rhul.CS3821_GO;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static uk.ac.rhul.CS3821_GO.EndStates.*;
 
@@ -45,7 +46,7 @@ public class MonteCarloTreeSearch {
             }
         }
         this.shiftingRoot.getChildren().removeAll(falsePredictions);
-        candidate = select(this.shiftingRoot);
+        candidate = this.shiftingRoot.getChildren().isEmpty() ? shiftingRoot : UCB(shiftingRoot);
         if (candidate == this.shiftingRoot) {
             candidate = new MCTSNode();
             candidate.setMoves(moves);
@@ -56,21 +57,23 @@ public class MonteCarloTreeSearch {
     }
 
     public int[] path(){
-        MCTSNode leaf;
-            for (int i = 0; i < iterations; i++) {
-                leaf = UCB(this.shiftingRoot);
-                for (int j = 0; j < this.rollOuts; j++) {
-                    GameModel simModel = this.gameInterface.presimulate(leaf.getMoves(), 0);
-                    MCTSNode terminates = rollOut(leaf, simModel);
-                    if (terminates != leaf){
-                        MCTSNode parent = getParentSafe(leaf);
-                        backpropagate(parent, terminates);
-                    }
+        MCTSNode leaf = shiftingRoot;
+                for (int i = 0; i < iterations; i++) {
+                        for (int j = 0; j < this.rollOuts; j++) {
+                            GameModel simModel = this.gameInterface.presimulate(leaf.getMoves(), 0);
+                            MCTSNode terminates = rollOut(leaf, simModel);
+                            if (terminates != leaf) {
+                                MCTSNode parent = getParentSafe(leaf);
+                                backpropagate(parent, terminates);
+                            }
+                        }
+                    leaf = this.shiftingRoot.getChildren().isEmpty() ? this.shiftingRoot : UCB(this.shiftingRoot);
                 }
-            }
         leaf = select(this.shiftingRoot);
-        int[] bestMove =  leaf.getMoves().get(this.moveList.size());
-        return bestMove;
+            if(leaf == null){
+                return new int[]{-1,-1}; //if all possible moves are invalid just pass.
+            }
+        return leaf.getMoves().get(this.moveList.size());
     }
 
     private MCTSNode getParentSafe(MCTSNode leaf) {
@@ -78,15 +81,14 @@ public class MonteCarloTreeSearch {
     }
 
     public MCTSNode UCB(MCTSNode current) {
-        double bestScore = Integer.MIN_VALUE;
-        MCTSNode bestNode = current;
         ArrayList<MCTSNode> children = current.getChildren();
         Collections.shuffle(children);
+        MCTSNode bestNode = children.get(0);
+        double bestScore = bestNode.getScore();
             for (MCTSNode child : children) {
                 double score = child.getScore();
                 double ratio = Math.log(current.getVisits())/child.getVisits();
                 score += (this.explorationConfidence * Math.sqrt(ratio));
-
                     if (score >= bestScore) {
                         bestScore = score;
                         bestNode = child;
@@ -97,29 +99,26 @@ public class MonteCarloTreeSearch {
 
     protected MCTSNode select(MCTSNode initial) {
         Collections.shuffle(initial.getChildren(), this.rng);
-        int[] preventativeMove = null;
+        Set<MCTSNode> risky = new HashSet<>();
             for (MCTSNode promising: initial.getChildren()) {
-                if(preventativeMove != null){
-                    if (Arrays.equals(preventativeMove, promising.getMoves().get(initial.getMoves().size()))){
-                        return promising;
-                    }
-                } else if(promising.getEndState() == WON) {
+                if(promising.getEndState() == WON) {
                     return promising;
                 }
-                Optional<MCTSNode> losingCapture = promising.getChildren().stream().filter((i) -> i.getEndState()== LOST).findFirst();
-                if (losingCapture.isPresent()){
-                    preventativeMove = losingCapture.get().getMoves().get(initial.getMoves().size()+1);
+                if(promising.getChildren().stream().anyMatch((i)-> i.getEndState() == LOST)){
+                    risky.add(promising);
                 }
             }
-            if (preventativeMove!=null){
-                MCTSNode prescient = new MCTSNode(RUNNING, null);
-                ArrayList<int[]> prescientMoves = new ArrayList<>(initial.getMoves());
-                prescientMoves.add(preventativeMove);
-                prescient.setMoves(prescientMoves);
-                prescient.setParent(initial);
-                return prescient;
+            if(!risky.isEmpty()){
+                initial.getChildren().removeAll(risky);
+            }
+            if(initial.getChildren().isEmpty()) {
+                return null;
             }
         return UCB(initial);
+    }
+
+    private void avoidLoss(MCTSNode initial, MCTSNode doomed) {
+
     }
 
     private MCTSNode rollOut(MCTSNode start, GameModel simModel) {
