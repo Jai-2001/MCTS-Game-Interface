@@ -20,7 +20,7 @@ public class OnePlayerManager extends GoViewController {
             manager.updateBoardState();
             manager.play();
             manager.updateBoardState();
-        } while (!manager.someoneWon());
+        } while (!manager.someoneWon() &&!manager.hasEnded());
         manager.updateBoardState();
     }
 
@@ -28,7 +28,7 @@ public class OnePlayerManager extends GoViewController {
         this(scoreLimit, isBlack, Math.sqrt(2.0), 81, 81,100,  new Random());//ASCII uses this
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
-        this(scoreLimit, isBlack, 50, 81, 81, 50, new Random());//GUI uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 50, 81, 81, new Random());//GUI uses this
         this.view = view;
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, Random rng){
@@ -48,12 +48,8 @@ public class OnePlayerManager extends GoViewController {
     @Override
     public boolean updateBoardState(){
         Intersection wagered = this.model.getWagered();
-            if (wagered.getX() == -1) {
-                this.treeSearch.moveTaken(new int[]{-1,-1});
-                this.model.nextTurn();
-                this.model.moveWasValid = false;
-            } else {
-                this.treeSearch.moveTaken(new int[]{wagered.getY(), wagered.getX()});
+            if(wagered!=null) {
+                this.treeSearch.moveTaken(new int[]{wagered.getX(), wagered.getY()});
             }
             if (treeSearch.someoneWon(this.model) == EndStates.LOST){
                 System.out.println("You win!");
@@ -67,11 +63,7 @@ public class OnePlayerManager extends GoViewController {
         boolean track;
         do {
             int[] compMove = this.treeSearch.path();
-            if (compMove[0] == -1) {
-                track = true;
-            } else{
-                track = this.model.tryMove(compMove[1], compMove[0]);
-            }
+                track = this.model.tryMove(compMove[0], compMove[1]);
         } while(!track);
     }
     public boolean someoneWon(){

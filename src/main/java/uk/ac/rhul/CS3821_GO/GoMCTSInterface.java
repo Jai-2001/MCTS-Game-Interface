@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 public class GoMCTSInterface implements GameMCTSInterface {
-    private final MonteCarloTreeSearch monteCarloTreeSearch;
     private final boolean isBlack;
     private final int scoreLimit;
     Random rng;
@@ -31,32 +30,6 @@ public class GoMCTSInterface implements GameMCTSInterface {
         return simModel;
     }
 
-    @Override
-    public void moveTaken(int[] taken) {
-        MCTSNode candidate;
-        monteCarloTreeSearch.getMoveList().add(taken);
-        HashSet<MCTSNode> falsePredictions = new HashSet<>();
-        ArrayList<int[]> moves = new ArrayList<>(monteCarloTreeSearch.getMoveList());
-        next:
-            for (MCTSNode i : monteCarloTreeSearch.getShiftingRoot().getChildren()) {
-                List<int[]> subMoves = i.getMoves().subList(0, moves.size());
-                    for (int j = 0; j < subMoves.size(); j++) {
-                            if (subMoves.get(j)[0] != moves.get(j)[0] || subMoves.get(j)[1] != moves.get(j)[1]) {
-                                falsePredictions.add(i);
-                                continue next;
-                            }
-                    }
-            }
-        monteCarloTreeSearch.getShiftingRoot().getChildren().removeAll(falsePredictions);
-        candidate = monteCarloTreeSearch.select(monteCarloTreeSearch.getShiftingRoot());
-            if (candidate == monteCarloTreeSearch.getShiftingRoot()) {
-                candidate = new MCTSNode();
-                candidate.setMoves(moves);
-                monteCarloTreeSearch.getShiftingRoot().add(candidate);
-            }
-        candidate.setParent(null);
-        monteCarloTreeSearch.setShiftingRoot(candidate);
-    }
 
     @Override
     public int[] randomMove(GameModel simModel) {
@@ -82,10 +55,14 @@ public class GoMCTSInterface implements GameMCTSInterface {
     public EndStates someoneWon(GameModel model) {
         int[] indices = indices();
         int[] points = model.countPoints();
-            if (points[indices[1]] >= this.scoreLimit) {
-                return EndStates.LOST;
-            } else if (points[indices[0]] >= this.scoreLimit) {
+        int limit = this.scoreLimit;
+            if(model.hasEnded()){
+                limit = 0;
+            }
+            if (points[indices[0]] >= limit) {
                 return EndStates.WON;
+            } else if (points[indices[1]] >= limit || model.hasEnded()) {
+                return EndStates.LOST;
             } else {
                 return EndStates.RUNNING;
             }

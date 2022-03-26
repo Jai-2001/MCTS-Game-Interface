@@ -14,6 +14,8 @@ public class GoModel implements GameModel {
     private int lastGroup;
     private int lastX;
     private int lastY;
+    private boolean passedOnce;
+    private boolean hasEnded;
 
     GoModel(){
         this(new StoneMap(BOARD_SIZE_X,BOARD_SIZE_Y), new TurnState());
@@ -26,6 +28,8 @@ public class GoModel implements GameModel {
         this.lastGroup = -1;
         this.lastX  = -1;
         this.lastY  = -1;
+        this.passedOnce = false;
+        this.hasEnded = false;
     }
 
     public TurnState getCurrentTurn() {
@@ -50,31 +54,32 @@ public class GoModel implements GameModel {
     }
 
     protected void placeStone(PlayerModel player){
-        StoneGroups groups = player.getGroups();
-        Intersection wagered = this.board.getWagered();
-        if(player.equals(this.currentPlayerTurn.getWhite())){
-            wagered.setWhite();
-        } else{
-            wagered.setBlack();
-        }
-        int thisGroup = groups.getGroup(wagered);
-        if (thisGroup == -1){
-            thisGroup = ++lastGroup;
-            groups.addStone(thisGroup, wagered);
-        }
-        int xPos = wagered.getX();
-        int yPos = wagered.getY();
-        int playerIndex = player.getType().ordinal();
-        for(int[] offset : OffsetFactory.prepareOffsets(xPos, yPos)){
-            Intersection adjacent = this.board.getStone(xPos + offset[0], yPos + offset[1]);
-            if(adjacent.getRepresentation() == playerIndex){
-                int child = groups.getGroup(adjacent);
-                if(child != thisGroup){
-                    groups.combineGroups(thisGroup, child);
+            if(!passedOnce) {
+                StoneGroups groups = player.getGroups();
+                Intersection wagered = this.board.getWagered();
+                if (player.equals(this.currentPlayerTurn.getWhite())) {
+                    wagered.setWhite();
+                } else {
+                    wagered.setBlack();
+                }
+                int thisGroup = groups.getGroup(wagered);
+                if (thisGroup == -1) {
+                    thisGroup = ++lastGroup;
+                    groups.addStone(thisGroup, wagered);
+                }
+                int xPos = wagered.getX();
+                int yPos = wagered.getY();
+                int playerIndex = player.getType().ordinal();
+                for (int[] offset : OffsetFactory.prepareOffsets(xPos, yPos)) {
+                    Intersection adjacent = this.board.getStone(xPos + offset[0], yPos + offset[1]);
+                    if (adjacent.getRepresentation() == playerIndex) {
+                        int child = groups.getGroup(adjacent);
+                        if (child != thisGroup) {
+                            groups.combineGroups(thisGroup, child);
+                        }
+                    }
                 }
             }
-
-        }
     }
 
     protected void updateLiberties(PlayerModel player){
@@ -109,7 +114,13 @@ public class GoModel implements GameModel {
 
     @Override
     public boolean tryMove(int xPos, int yPos){
-        if (xPos == -1 || this.board.checkMove(xPos, yPos, currentPlayerTurn)){
+        if (xPos == -1){
+            this.hasEnded = this.currentPlayerTurn.getCurrentPlayer() == this.currentPlayerTurn.getWhite() && this.passedOnce;
+            this.passedOnce = true;
+            this.moveWasValid = true;
+            return true;
+        } else if(this.board.checkMove(xPos, yPos, currentPlayerTurn)){
+            this.passedOnce = false;
             this.moveWasValid = true;
             return true;
         }
@@ -121,6 +132,11 @@ public class GoModel implements GameModel {
     public int[] countPoints() {
         TurnState turn = this.getCurrentTurn();
         return new int[]{turn.getWhite().getConcededPoints(), turn.getBlack().getConcededPoints()};
+    }
+
+    @Override
+    public boolean hasEnded() {
+        return this.hasEnded;
     }
 
     public Intersection getWagered(){

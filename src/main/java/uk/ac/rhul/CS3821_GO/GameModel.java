@@ -6,4 +6,6 @@ public interface GameModel {
     boolean tryMove(int xPos, int yPos);
 
     int[] countPoints();
+
+    boolean hasEnded();
 }

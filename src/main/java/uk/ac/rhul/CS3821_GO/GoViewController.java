@@ -9,13 +9,12 @@ public class GoViewController {
         Scanner inputBuffer = new Scanner(System.in);
             do{
                 game.inputMove(inputBuffer);
-            } while (game.updateBoardState());
+            } while (game.updateBoardState() && !game.hasEnded());
     }
 
     protected GoModel model;
     View view;
-    protected boolean passedOnce;
-    protected boolean hasEnded;
+
 
     public GoViewController(){
         this(new GoModel(), new GoASCIIView());
@@ -24,8 +23,6 @@ public class GoViewController {
     public GoViewController(GoModel model, View view) {
         this.model = model;
         this.view = view;
-        this.passedOnce = false;
-        this.hasEnded = false;
     }
 
     public boolean updateBoardState() {
@@ -45,21 +42,20 @@ public class GoViewController {
         if (turn.getCurrentPlayer() == turn.getWhite()){
             playerName = "White";
         }
-         do {
+        game: do {
             int[] intScores = this.model.countPoints();
             String[] scores = {Integer.toString(intScores[0]), Integer.toString(intScores[1])};
             String[] response = this.view.promptInput(playerName, scores, inputBuffer).split(",");
                 switch (response[0].charAt(0)){
                     case 'q':
-                        this.model.moveWasValid = false;
-                        continue;
+                        for (int i = 0; i < 3; i++) {
+                            this.model.tryMove(-1,1);
+                            this.model.nextTurn();
+                        }
                     case 'p':
-                        this.hasEnded =  playerName.equals("White") && passedOnce;
-                        this.passedOnce = true;
-                        this.model.moveWasValid = true;
+                        this.model.tryMove(-1,1);
                         continue;
                     default:
-                        passedOnce = false;
                         moveX = Integer.parseInt(response[0])-1;
                         moveY = Integer.parseInt(response[1])-1;
                         this.model.tryMove(moveY,moveX);
@@ -81,6 +77,6 @@ public class GoViewController {
     }
 
     public boolean hasEnded() {
-        return this.hasEnded;
+        return this.model.hasEnded();
     }
 }
