@@ -140,6 +140,9 @@ public class GoModel implements GameModel {
     }
 
     public Intersection getWagered(){
+        if(this.passedOnce){
+            return new Intersection(-1,-1);
+        }
         return this.board.getWagered();
     }
 }
