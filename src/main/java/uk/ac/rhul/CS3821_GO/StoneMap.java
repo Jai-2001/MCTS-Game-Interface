@@ -1,6 +1,7 @@
 package uk.ac.rhul.CS3821_GO;
 
 
+import java.util.Arrays;
 import java.util.Set;
 
 public class StoneMap {
@@ -8,11 +9,11 @@ public class StoneMap {
     private final Intersection[][] grid;
     private Intersection wagered;
 
-    StoneMap(int xSize, int ySize){
+    StoneMap(byte xSize, byte ySize){
         this.grid = new Intersection[xSize][ySize];
         for (int x = 0; x < xSize; x++) {
             for (int y = 0; y < ySize; y++) {
-                this.grid[x][y] = new Intersection(x,y);
+                this.grid[x][y] = new Intersection((byte) x, (byte) y);
             }
         }
         this.wagered = null;
@@ -43,7 +44,8 @@ public class StoneMap {
                     if(neighbourGroup != null) {
                         if (friendly.getLiberties(neighbour).size() > 1) {
                             return true;
-                        } else if(friendly.getAllGroups().stream().filter(i -> friendly.getLiberties(i) != null).allMatch(i -> friendly.getLiberties(i).size() <= 1)){
+                        } else if(friendly.getAllGroups().stream().filter(i -> friendly.getLiberties(i) != null)
+                                .allMatch(i -> friendly.getLiberties(i).size() <= 1)){
                             return true;
                         }
                     }

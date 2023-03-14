@@ -67,7 +67,7 @@ class GoViewControllerTest {
             testController.updateBoardState();
         }
         inputBuffer.close();
-        int[][] resultBoard = testController.getIntBoard();
+        byte[][] resultBoard = testController.getIntBoard();
         assertEquals(1, resultBoard[1][1]);
         assertEquals(2, resultBoard[1][2]);
         assertEquals(1, resultBoard[3][1]);

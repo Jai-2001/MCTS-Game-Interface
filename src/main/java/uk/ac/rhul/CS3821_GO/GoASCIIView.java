@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class GoASCIIView implements View {
 
-    public void printBoard(int[][] asciiBoard) {
-            for (int[] row : asciiBoard) {
+    public void printBoard(byte[][] asciiBoard) {
+            for (byte[] row : asciiBoard) {
                     for (int position : row) {
                         switch (position) {
                             case 0 -> System.out.print('+');

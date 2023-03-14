@@ -2,6 +2,9 @@ package uk.ac.rhul.CS3821_GO;
 
 import java.util.Scanner;
 
+import static uk.ac.rhul.CS3821_GO.GoModel.BOARD_SIZE_X;
+import static uk.ac.rhul.CS3821_GO.GoModel.BOARD_SIZE_Y;
+
 public class GoViewController {
 
     public static void main(String[] args) {
@@ -65,12 +68,16 @@ public class GoViewController {
 
     }
 
-    public int[][] getIntBoard() {
+    public byte[][] getIntBoard() {
         Intersection[][] modelBoard = this.model.getBoard();
-        int[][] currentBoard = new int[model.BOARD_SIZE_X][model.BOARD_SIZE_Y];
-        for (int x = 0; x < model.BOARD_SIZE_X; x++) {
-            for (int y = 0; y < model.BOARD_SIZE_Y; y++) {
-                currentBoard[x][y] = modelBoard[x][y].getRepresentation();
+        return getIntBoard(modelBoard);
+    }
+
+    public static byte[][] getIntBoard(Intersection[][] board){
+        byte[][] currentBoard = new byte[BOARD_SIZE_X][BOARD_SIZE_Y];
+        for (int x = 0; x < BOARD_SIZE_X; x++) {
+            for (int y = 0; y < BOARD_SIZE_Y; y++) {
+                currentBoard[x][y] = board[x][y].getRepresentation();
             }
         }
         return currentBoard;

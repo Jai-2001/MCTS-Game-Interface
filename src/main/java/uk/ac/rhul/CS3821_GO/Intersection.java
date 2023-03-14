@@ -2,16 +2,16 @@ package uk.ac.rhul.CS3821_GO;
 
 public class Intersection {
     private StoneTypes stone;
-    private final int x;
-    private final int y;
+    private final byte x;
+    private final byte y;
 
     Intersection() {
-        this.x = (int) (System.nanoTime() % Integer.MAX_VALUE);
-        this.y = (int) (System.nanoTime() % Integer.MAX_VALUE);
+        this.x = (byte) (System.nanoTime() % Integer.MAX_VALUE);
+        this.y = (byte) (System.nanoTime() % Integer.MAX_VALUE);
         stone = StoneTypes.NONE;
     }
 
-    Intersection(int xPos, int yPos){
+    Intersection(byte xPos, byte yPos){
         this.x = xPos;
         this.y = yPos;
         stone = StoneTypes.NONE;
@@ -40,15 +40,15 @@ public class Intersection {
         return this.stone == StoneTypes.NONE;
     }
 
-    public int getRepresentation(){
-        return this.stone.ordinal();
+    public byte getRepresentation(){
+        return (byte) this.stone.ordinal();
     }
 
-    public int getX() {
+    public byte getX() {
         return x;
     }
 
-    public int getY() {
+    public byte getY() {
         return y;
     }
 

@@ -38,12 +38,12 @@ public class MCTSNode {
         return this.children == null ? new ArrayList<>() : this.children;
     }
 
-    public void setMoves(ArrayList<int[]> moves){
-        this.moveList = moves;
+    public void setMove(byte[] moves){
+        this.move = moves;
     }
 
-    public ArrayList<int[]> getMoves(){
-        return this.moveList == null ? new ArrayList<>(): this.moveList;
+    public byte[] getMove(){
+        return this.move;
     }
 
     public EndStates getEndState() {

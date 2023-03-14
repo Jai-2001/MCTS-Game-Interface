@@ -18,7 +18,7 @@ class StoneMapTest {
     @BeforeEach()
     void setUp(){
         turn = new TurnState();
-        parent = new GoModel(new StoneMap(9,9), turn);
+        parent = new GoModel(new StoneMap((byte) 9, (byte) 9), turn);
 
     }
 

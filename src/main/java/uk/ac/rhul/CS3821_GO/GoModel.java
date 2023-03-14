@@ -5,8 +5,8 @@ import java.util.List;
 
 public class GoModel implements GameModel {
 
-    final static int BOARD_SIZE_X = 9;
-    final static int BOARD_SIZE_Y = 9;
+    final static byte BOARD_SIZE_X = 9;
+    final static byte BOARD_SIZE_Y = 9;
 
     private final TurnState currentPlayerTurn;
     private final StoneMap board;
@@ -141,7 +141,7 @@ public class GoModel implements GameModel {
 
     public Intersection getWagered(){
         if(this.passedOnce){
-            return new Intersection(-1,-1);
+            return new Intersection((byte) -1, (byte) -1);
         }
         return this.board.getWagered();
     }
