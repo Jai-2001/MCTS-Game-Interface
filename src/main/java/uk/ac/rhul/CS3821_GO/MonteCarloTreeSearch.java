@@ -1,172 +1,216 @@
 package uk.ac.rhul.CS3821_GO;
 
+import com.kitfox.svg.A;
+
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static uk.ac.rhul.CS3821_GO.EndStates.*;
 
 public class MonteCarloTreeSearch {
     private final double explorationConfidence;
     private final int searchDepth;
-    private final GameMCTSInterface gameInterface;
+    public final GameMCTSInterface gameInterface;
     private MCTSNode shiftingRoot;
     private final Random rng;
     private final int rollOuts;
     private final int iterations;
-    private ArrayList<int[]> moveList;
+    public ArrayList<byte[]> moveList;
 
+    private int backgroundIterations;
+    private int maxBackground;
     public MonteCarloTreeSearch(int scoreLimit, boolean isBlack){
         this(scoreLimit, Math.sqrt(2.0), 450, 35, new Random(), isBlack, 350);
     }
 
-    public MonteCarloTreeSearch(int scoreLimit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations) {
+    public MonteCarloTreeSearch(int limit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations) {
+        this(limit,confidence,depth,rollouts,rng,isBlack,iterations,0);
+    }
+    public MonteCarloTreeSearch(int limit, double confidence, int depth, int rollouts, Random rng, boolean isBlack, int iterations, int background) {
         this.explorationConfidence = confidence;
         this.searchDepth = depth;
         this.rng = rng;
-        this.gameInterface = new GoMCTSInterface(isBlack, scoreLimit, rng);
+        this.gameInterface = new GoMCTSInterface(isBlack, limit, rng);
         this.rollOuts = rollouts;
-        this.iterations = (iterations/scoreLimit) + 1;
+        this.iterations = iterations;
         this.shiftingRoot = new MCTSNode();
         this.moveList = new ArrayList<>();
+        this.maxBackground = background;
+        this.backgroundIterations = 0;
     }
 
-    public void moveTaken(int[] taken){
+    public void moveTaken(byte[] taken){
+        //System.out.println("USER HAS TAKEN MOVE -> "+ Arrays.toString(taken));
         MCTSNode candidate;
         this.moveList.add(taken);
         HashSet<MCTSNode> falsePredictions = new HashSet<>();
-        ArrayList<int[]> moves = new ArrayList<>(this.moveList);
-        next:
-        for (MCTSNode i : this.shiftingRoot.getChildren()) {
-            List<int[]> subMoves = i.getMoves().subList(0, moves.size());
-            for (int j = 0; j < subMoves.size(); j++) {
-                if (subMoves.get(j)[0] != moves.get(j)[0] || subMoves.get(j)[1] != moves.get(j)[1]) {
-                    falsePredictions.add(i);
-                    continue next;
-                }
+        for (MCTSNode i : this.shiftingRoot.getChildren().values()) {
+            if (!Arrays.equals(i.getMove(),taken)) {
+                falsePredictions.add(i);
             }
+
         }
-        this.shiftingRoot.getChildren().removeAll(falsePredictions);
-        candidate = this.shiftingRoot.getChildren().isEmpty() ? shiftingRoot : UCB(shiftingRoot);
-        if (candidate == this.shiftingRoot) {
+        this.shiftingRoot.getChildren().values().removeAll(falsePredictions);
+        candidate = this.shiftingRoot.getChildren().isEmpty() ? shiftingRoot : select(shiftingRoot);
+        if (candidate ==null || candidate == this.shiftingRoot) {
             candidate = new MCTSNode();
-            candidate.setMoves(moves);
+            candidate.setMove(taken);
             this.shiftingRoot.add(candidate);
+            candidate.setParent(this.shiftingRoot);
         }
-        candidate.setParent(null);
+
         this.shiftingRoot = candidate;
     }
-
-    public int[] path(){
-        MCTSNode leaf = shiftingRoot;
-                for (int i = 0; i < iterations; i++) {
-                        for (int j = 0; j < this.rollOuts; j++) {
-                            GameModel simModel = this.gameInterface.presimulate(leaf.getMoves(), 0);
-                            MCTSNode terminates = rollOut(leaf, simModel);
-                            if (terminates != leaf) {
-                                MCTSNode parent = getParentSafe(leaf);
-                                backpropagate(parent, terminates);
-                            }
-                        }
-                    leaf = this.shiftingRoot.getChildren().isEmpty() ? this.shiftingRoot : UCB(this.shiftingRoot);
-                }
-        leaf = select(this.shiftingRoot);
-            if(leaf == null){
-                return new int[]{-1,-1}; //if all possible moves are invalid just pass.
-            }
-        return leaf.getMoves().get(this.moveList.size());
+    public byte[] path(){
+        int iterations = this.iterations;
+        if(maxBackground<Integer.MAX_VALUE && backgroundIterations<maxBackground){
+            iterations+=(maxBackground-backgroundIterations);
+        }
+        MCTSNode best = path(iterations);
+        GameModel currentModel = gameInterface.presimulate(shiftingRoot.buildMoveList());
+        if(best==null) {
+            return gameInterface.randomMove(currentModel);
+        } else {
+            return best.getMove();
+        }
     }
 
+    public MCTSNode path(int iterations){
+        System.out.println("Pathing: " + iterations);
+        iterate(iterations);
+        return select();
+    }
+
+    public MCTSNode backgroundPath(int iterations){
+        if(incrementIterations(iterations)){
+            iterate(iterations);
+        }
+        return select();
+    }
+
+    private void iterate(int iterations){
+        Stream.generate(this::explore).limit(iterations).parallel().forEach((leaf)->
+                IntStream.range(0, rollOuts)
+                        .parallel()
+                        .forEach(n->this.rollOut(leaf))
+        );
+    }
+
+    public MCTSNode explore(){
+        return UCB(this.shiftingRoot);
+    }
     private MCTSNode getParentSafe(MCTSNode leaf) {
         return leaf.getParent() == null ? this.shiftingRoot : leaf.getParent();
     }
 
-    public MCTSNode UCB(MCTSNode current) {
-        ArrayList<MCTSNode> children = current.getChildren();
+    public MCTSNode UCB(MCTSNode current){
+        if(current==null){
+            return shiftingRoot;
+        } else {
+            ArrayList<MCTSNode> children = new ArrayList<>(current.getChildren().values());
+            if(children.isEmpty()){
+                return current;
+            }
+            return UCB(current, children);
+        }
+    }
+    public MCTSNode UCB(MCTSNode current, ArrayList<MCTSNode> children) {
         Collections.shuffle(children);
         MCTSNode bestNode = children.get(0);
-        double bestScore = bestNode.getScore();
+        double bestScore = Double.NEGATIVE_INFINITY;
             for (MCTSNode child : children) {
-                double score = child.getScore();
-                double ratio = Math.log(current.getVisits())/child.getVisits();
-                score += (this.explorationConfidence * Math.sqrt(ratio));
+                    double score = this.explorationConfidence;
+                    if(child.getVisits() <= 1){
+                        score -=1;
+                    } else {
+                        score *= Math.sqrt(Math.log(current.getVisits())/child.getVisits());
+
+                    }
+                    score += child.getScore();
                     if (score >= bestScore) {
                         bestScore = score;
                         bestNode = child;
                     }
             }
+        //bestNode.incrementVisits();
         return bestNode;
     }
 
-    protected MCTSNode select(MCTSNode initial) {
-        Collections.shuffle(initial.getChildren(), this.rng);
+    public MCTSNode select(){
+        return select(shiftingRoot);
+    }
+    public MCTSNode select(MCTSNode initial) {
+        if (initial==null) {
+            iterate(1);
+            return select();
+        };
+        ArrayList<MCTSNode> children = new ArrayList<>(initial.getChildren().values());
+        Collections.shuffle(children, this.rng);
         Set<MCTSNode> risky = new HashSet<>();
-            for (MCTSNode promising: initial.getChildren()) {
+            for (MCTSNode promising: children) {
                 if(promising.getEndState() == WON) {
                     return promising;
-                }
-                if(promising.getChildren().stream().anyMatch((i)-> i.getEndState() == LOST)){
+                } else if(promising.getChildren().values().stream().anyMatch((i)-> i.getEndState() == LOST)){
                     risky.add(promising);
                 }
             }
             if(!risky.isEmpty()){
-                initial.getChildren().removeAll(risky);
+                if(risky.containsAll(children)) {
+                    System.err.println("DANGER");
+                    rollOut(initial);
+                    return select(initial);
+
+                } else {
+                    children.removeAll(risky);
+                }
             }
-            if(initial.getChildren().isEmpty()) {
-                return null;
-            }
-        return UCB(initial);
+        return children.stream()
+                .max(Comparator.comparing(MCTSNode::getScore))
+                .orElse(null);
     }
-
-    private void avoidLoss(MCTSNode initial, MCTSNode doomed) {
-
-    }
-
-    private MCTSNode rollOut(MCTSNode start, GameModel simModel) {
-        ArrayList<int[]> runningMoves = start.getMoves();
+    private MCTSNode rollOut(MCTSNode start) {
+        ArrayList<byte[]> subMoves = new ArrayList<>(start.buildMoveList());
+        GameModel simModel = this.gameInterface.presimulate(subMoves, 0);
+        int depth = searchDepth;
         MCTSNode ball = start;
-        int depth = this.searchDepth;
-            while (ball.getEndState() == RUNNING && depth >= 0){
-                ArrayList<int[]> uniqueMoves = new ArrayList<>();
-                    for (MCTSNode uniqueChild: ball.getChildren()) {
-                        uniqueMoves.add(uniqueChild.getMoves().get(ball.getMoves().size()));
-                    }
-                int[] newMove;
+            top: while (ball.getEndState() == RUNNING && depth >= 0){
+                byte[] newMove;
                 boolean hasBeenDone;
                 int tries = 0;
                     do {
-                        hasBeenDone = false;
                         newMove = gameInterface.randomMove(simModel);
-                            for (int[] unique : uniqueMoves) {
-                                if (unique[0] == newMove[0] && unique[1] == newMove[1]) {
-                                    hasBeenDone = true;
-                                    break;
-                                }
+                        hasBeenDone = ball.moveAlreadyDone(newMove);
+                        if(hasBeenDone){
+                            tries++;
+                            if(tries > this.rollOuts){
+//                                MCTSNode cannon = ball;
+//                                while(cannon != start){
+//                                    cannon = cannon.getParent();
+//                                    if (cannon != null) cannon.getChildren().values().removeIf((i)->true);
+//                                }
+                                return start;
+//                                continue top;
                             }
-                        tries++;
-                        if(tries > this.rollOuts){
-                            MCTSNode cannon = ball;
-                            while(cannon != start){
-                                cannon = cannon.getParent();
-                                if (cannon != null) cannon.getChildren().removeIf((i)->true);
-                            }
-                            return start;
+
                         }
+
                     } while (hasBeenDone);
-            runningMoves = new ArrayList<>(runningMoves);
-            runningMoves.add(newMove);
             simModel.nextTurn();
             MCTSNode nextBall = new MCTSNode(gameInterface.someoneWon(simModel), null);
-            nextBall.setMoves(runningMoves);
+            nextBall.setMove(newMove);
             nextBall.setParent(ball);
             ball.add(nextBall);
             ball = nextBall;
             depth--;
         }
+        backpropagate(ball);
         return ball;
     }
 
-    private void backpropagate(MCTSNode start, MCTSNode ball) {
-        start.incrementVisits();
+    private void backpropagate(MCTSNode ball) {
+        MCTSNode start = shiftingRoot;
             if(ball.getEndState()!= RUNNING) {
                 double score = switch (ball.getEndState()) {
                     case WON -> 1;
@@ -179,10 +223,30 @@ public class MonteCarloTreeSearch {
                     ball.setScore(ball.getScore() + score);
                     ball = ball.getParent();
                 }
+                ball.incrementVisits();
             }
     }
 
+    public MCTSNode getShiftingRoot(){
+        return this.shiftingRoot;
+    }
     public EndStates someoneWon(GoModel model){
         return gameInterface.someoneWon(model);
+    }
+    public int checkIterations() {
+        return this.backgroundIterations;
+    }
+    public boolean incrementIterations(int requested) {
+        if(maxBackground>requested+backgroundIterations+1){
+            this.backgroundIterations+=requested;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean clearIterations() {
+        boolean wasComplete = this.backgroundIterations>=this.maxBackground;
+        this.backgroundIterations = 0;
+        return wasComplete;
     }
 }

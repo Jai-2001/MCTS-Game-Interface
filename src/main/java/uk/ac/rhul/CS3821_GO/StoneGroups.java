@@ -1,19 +1,16 @@
 package uk.ac.rhul.CS3821_GO;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-public class StoneGroups {
+public class StoneGroups implements Cloneable {
     Map<Integer, Set<Intersection>> stones;
     Map<Intersection, Integer> stonesInverse;
     Map<Integer, Set<Intersection>> liberties;
 
     public StoneGroups() {
-        this.stones = new HashMap<>();
-        this.stonesInverse = new HashMap<>();
-        this.liberties = new HashMap<>();
+        this.stones = new IdentityHashMap<>();
+        this.stonesInverse = new IdentityHashMap<>();
+        this.liberties = new IdentityHashMap<>();
     }
 
     public int getGroup(Intersection query) {

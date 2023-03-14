@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,21 +28,12 @@ class MCTSNodeTest {
     void testTraversal(){
         MCTSNode childOne = new MCTSNode();
         MCTSNode childTwo = new MCTSNode();
+        childTwo.setMove(new byte[]{1,1});
         root.add(childOne);
         root.add(childTwo);
-        ArrayList<MCTSNode> children = root.getChildren();
+        Collection<MCTSNode> children = root.getChildren().values();
         assertTrue(children.contains(childOne));
         assertTrue(children.contains(childTwo));
-    }
-
-    @Test
-    void testPayloads(){
-        root.setMoves(new ArrayList(List.of(new int[]{1, 1})));
-        MCTSNode child = new MCTSNode();
-        child.setMoves(new ArrayList<>(List.of(new int[]{1,1}, new int[]{2,2})));
-        assertArrayEquals(root.getMoves().get(0), new int[]{1, 1});
-        assertArrayEquals(child.getMoves().get(0), new int[]{1, 1});
-        assertArrayEquals(child.getMoves().get(1), new int[]{2, 2});
     }
 
 }

@@ -18,6 +18,9 @@ public class OnePlayerManager extends GoViewController {
         do{
             manager.inputMove(inputBuffer);
             manager.updateBoardState();
+            if(manager.someoneWon()  || manager.hasEnded()){
+                break;
+            }
             manager.play();
             manager.updateBoardState();
         } while (!manager.someoneWon() &&!manager.hasEnded());
@@ -25,15 +28,21 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public OnePlayerManager(int scoreLimit, boolean isBlack) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), 450, 35,350,  new Random());//ASCII uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 2, 2,500,100,  new Random());//ASCII uses this
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), 450, 35, 350, new Random());//GUI uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 2, 81, 1500,Integer.MAX_VALUE, new Random());//GUI uses this
         this.view = view;
+        if(view instanceof GoWindowView){
+            ((GoWindowView) view).setOptional(this.treeSearch);
+        }
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, Random rng){
+        this(scoreLimit, isBlack, confidence, depth, rollOuts, iterations, 0,rng);
+    }
+    public OnePlayerManager(int scoreLimit, boolean isBlack, double confidence, int depth, int rollOuts, int iterations, int background, Random rng){
         super();
-        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack, iterations);//Tests use this
+        this.treeSearch = new MonteCarloTreeSearch(scoreLimit, confidence, depth, rollOuts, rng , isBlack, iterations, background);//Tests use this
             if(isBlack){
                 play();
                 updateBoardState();
@@ -49,7 +58,7 @@ public class OnePlayerManager extends GoViewController {
     public boolean updateBoardState(){
         Intersection wagered = this.model.getWagered();
             if(wagered!=null) {
-                this.treeSearch.moveTaken(new int[]{wagered.getX(), wagered.getY()});
+                this.treeSearch.moveTaken(new byte[]{wagered.getX(), wagered.getY()});
             }
             if (treeSearch.someoneWon(this.model) == EndStates.LOST){
                 System.out.println("You win!");
@@ -62,12 +71,16 @@ public class OnePlayerManager extends GoViewController {
     public void play() {
         boolean track;
         do {
-            int[] compMove = this.treeSearch.path();
-                track = this.model.tryMove(compMove[0], compMove[1]);
+            byte[] compMove = this.treeSearch.path();
+            track = this.model.tryMove(compMove[0], compMove[1]);
         } while(!track);
+        this.treeSearch.clearIterations();
     }
     public boolean someoneWon(){
        return treeSearch.someoneWon(this.model) != EndStates.RUNNING;
     }
 
+    public String getWinner(){
+        return treeSearch.gameInterface.someoneWon(this.model) == EndStates.WON ? "Black": "White";
+    }
 }

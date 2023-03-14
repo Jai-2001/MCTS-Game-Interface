@@ -1,7 +1,7 @@
 package uk.ac.rhul.CS3821_GO;
 import java.lang.IllegalArgumentException;
 
-public class PlayerModel {
+public class PlayerModel implements Cloneable{
     private final StoneTypes type;
     private final StoneGroups stoneGroups;
     private int concededPoints;
