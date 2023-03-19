@@ -1,7 +1,10 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.Views;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import uk.ac.rhul.CS3821_GO.GoDemo.Controllers.OnePlayerManager;
+import uk.ac.rhul.CS3821_GO.MCTSNode;
+import uk.ac.rhul.CS3821_GO.MonteCarloTreeSearch;
 
 import java.io.ByteArrayInputStream;
 import java.util.Scanner;
@@ -9,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.LockSupport;
 
-public class GoWindowView implements View{
+public class GoWindowView implements View {
 
     private MonteCarloTreeSearch optional = null;
     private final static long REFRESH_RATE = 10;

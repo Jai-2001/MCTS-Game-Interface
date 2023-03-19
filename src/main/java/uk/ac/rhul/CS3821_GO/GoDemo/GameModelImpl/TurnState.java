@@ -1,4 +1,4 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 
 public class TurnState {
     private PlayerModel current;

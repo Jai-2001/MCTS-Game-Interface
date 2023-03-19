@@ -1,4 +1,4 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 import java.lang.IllegalArgumentException;
 
 public class PlayerModel implements Cloneable{

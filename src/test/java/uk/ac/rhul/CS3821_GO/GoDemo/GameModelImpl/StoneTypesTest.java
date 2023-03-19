@@ -1,6 +1,8 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.StoneTypes;
+
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 class StoneTypesTest {
@@ -12,7 +14,7 @@ class StoneTypesTest {
 
     @Test
     void testCardinality(){
-        assertEquals(3,StoneTypes.values().length);
+        assertEquals(3, StoneTypes.values().length);
     }
 
 

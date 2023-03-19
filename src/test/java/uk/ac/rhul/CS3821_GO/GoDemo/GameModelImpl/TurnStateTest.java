@@ -1,10 +1,10 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Random;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.StoneTypes;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.TurnState;
 
 import static org.junit.jupiter.api.Assertions.*;
 

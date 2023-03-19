@@ -1,7 +1,8 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.Intersection;
 
 class IntersectionTest {
 

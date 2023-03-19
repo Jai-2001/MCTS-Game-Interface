@@ -1,7 +1,6 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 
 
-import java.util.Arrays;
 import java.util.Set;
 
 public class StoneMap {

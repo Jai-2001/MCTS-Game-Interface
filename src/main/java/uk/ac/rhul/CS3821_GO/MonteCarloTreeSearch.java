@@ -1,9 +1,9 @@
 package uk.ac.rhul.CS3821_GO;
 
-import com.kitfox.svg.A;
+import uk.ac.rhul.CS3821_GO.GoDemo.GoMCTSInterface;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.GoModel;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -15,7 +15,7 @@ public class MonteCarloTreeSearch {
     public final GameMCTSInterface gameInterface;
     private MCTSNode shiftingRoot;
     private final Random rng;
-    private final int rollOuts;
+    protected final int rollOuts;
     private final int iterations;
     public ArrayList<byte[]> moveList;
 
@@ -90,7 +90,7 @@ public class MonteCarloTreeSearch {
         return select();
     }
 
-    private void iterate(int iterations){
+    protected void iterate(int iterations){
         Stream.generate(this::explore).limit(iterations).parallel().forEach((leaf)->
                 IntStream.range(0, rollOuts)
                         .parallel()
@@ -170,7 +170,7 @@ public class MonteCarloTreeSearch {
                 .max(Comparator.comparing(MCTSNode::getScore))
                 .orElse(null);
     }
-    private MCTSNode rollOut(MCTSNode start) {
+    protected MCTSNode rollOut(MCTSNode start) {
         ArrayList<byte[]> subMoves = new ArrayList<>(start.buildMoveList());
         GameModel simModel = this.gameInterface.presimulate(subMoves, 0);
         int depth = searchDepth;

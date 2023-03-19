@@ -1,9 +1,13 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.Controllers;
+
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.GoModel;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.Intersection;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.TurnState;
+import uk.ac.rhul.CS3821_GO.GoDemo.Views.GoASCIIView;
+import uk.ac.rhul.CS3821_GO.GoDemo.Views.View;
 
 import java.util.Scanner;
 
-import static uk.ac.rhul.CS3821_GO.GoModel.BOARD_SIZE_X;
-import static uk.ac.rhul.CS3821_GO.GoModel.BOARD_SIZE_Y;
 
 public class GoViewController {
 
@@ -29,7 +33,7 @@ public class GoViewController {
     }
 
     public boolean updateBoardState() {
-        if (this.model.moveWasValid){
+        if (this.model.moveWasValid()){
             this.model.nextTurn();
             return true;
         }
@@ -64,7 +68,7 @@ public class GoViewController {
                         this.model.tryMove(moveY,moveX);
                         break;
                 }
-         } while(!this.model.moveWasValid);
+         } while(!this.model.moveWasValid());
 
     }
 
@@ -74,9 +78,9 @@ public class GoViewController {
     }
 
     public static byte[][] getIntBoard(Intersection[][] board){
-        byte[][] currentBoard = new byte[BOARD_SIZE_X][BOARD_SIZE_Y];
-        for (int x = 0; x < BOARD_SIZE_X; x++) {
-            for (int y = 0; y < BOARD_SIZE_Y; y++) {
+        byte[][] currentBoard = new byte[GoModel.BOARD_SIZE_X][GoModel.BOARD_SIZE_Y];
+        for (int x = 0; x < GoModel.BOARD_SIZE_X; x++) {
+            for (int y = 0; y < GoModel.BOARD_SIZE_Y; y++) {
                 currentBoard[x][y] = board[x][y].getRepresentation();
             }
         }

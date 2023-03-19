@@ -1,7 +1,13 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo;
+
+import uk.ac.rhul.CS3821_GO.EndStates;
+import uk.ac.rhul.CS3821_GO.GameMCTSInterface;
+import uk.ac.rhul.CS3821_GO.GameModel;
+import uk.ac.rhul.CS3821_GO.GoDemo.Controllers.GoViewController;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.GoLegalMoves;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.GoModel;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class GoMCTSInterface implements GameMCTSInterface {
     private final boolean compIsBlack;

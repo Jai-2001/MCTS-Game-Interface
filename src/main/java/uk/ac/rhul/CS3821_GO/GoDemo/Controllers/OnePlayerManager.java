@@ -1,4 +1,10 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.Controllers;
+
+import uk.ac.rhul.CS3821_GO.EndStates;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.Intersection;
+import uk.ac.rhul.CS3821_GO.GoDemo.Views.GoWindowView;
+import uk.ac.rhul.CS3821_GO.GoDemo.Views.View;
+import uk.ac.rhul.CS3821_GO.MonteCarloTreeSearch;
 
 import java.util.*;
 
@@ -28,7 +34,7 @@ public class OnePlayerManager extends GoViewController {
     }
 
     public OnePlayerManager(int scoreLimit, boolean isBlack) {
-        this(scoreLimit, isBlack, Math.sqrt(2.0), 2, 2,500,100,  new Random());//ASCII uses this
+        this(scoreLimit, isBlack, Math.sqrt(2.0), 2, 81,100000,100,  new Random());//ASCII uses this
     }
     public OnePlayerManager(int scoreLimit, boolean isBlack, View view) {
         this(scoreLimit, isBlack, Math.sqrt(2.0), 2, 81, 1500,Integer.MAX_VALUE, new Random());//GUI uses this

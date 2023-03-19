@@ -1,8 +1,10 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.Views;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.rhul.CS3821_GO.GoDemo.Views.GoASCIIView;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.GoModel;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

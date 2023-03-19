@@ -1,23 +1,25 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
+
+import uk.ac.rhul.CS3821_GO.GameModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GoModel implements GameModel {
 
-    final static byte BOARD_SIZE_X = 9;
-    final static byte BOARD_SIZE_Y = 9;
+    public final static byte BOARD_SIZE_X = 9;
+    public final static byte BOARD_SIZE_Y = 9;
 
     private final TurnState currentPlayerTurn;
     private final StoneMap board;
-    boolean moveWasValid;
+    private boolean moveWasValid;
     private int lastGroup;
     private int lastX;
     private int lastY;
     private boolean passedOnce;
     private boolean hasEnded;
 
-    GoModel(){
+    public GoModel(){
         this(new StoneMap(BOARD_SIZE_X,BOARD_SIZE_Y), new TurnState());
     }
 
@@ -144,6 +146,10 @@ public class GoModel implements GameModel {
             return new Intersection((byte) -1, (byte) -1);
         }
         return this.board.getWagered();
+    }
+
+    public boolean moveWasValid() {
+        return moveWasValid;
     }
 }
 

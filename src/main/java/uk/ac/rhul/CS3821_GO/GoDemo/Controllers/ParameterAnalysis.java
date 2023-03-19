@@ -1,11 +1,16 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.Controllers;
+
+
+import uk.ac.rhul.CS3821_GO.GoDemo.GoMCTSInterface;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
 public class ParameterAnalysis {
     public static void main(String[] args) throws IOException {
+
         Random seeded = new Random(20223821);
         Scanner input = new Scanner(System.in);
         int maxLimit = takeInt("Please enter an upper bound for score limit:", input);

@@ -1,4 +1,4 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.Views;
 
 
 import javafx.animation.AnimationTimer;
@@ -26,6 +26,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import uk.ac.rhul.CS3821_GO.GoDemo.GoMCTSInterface;
+import uk.ac.rhul.CS3821_GO.MCTSNode;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;

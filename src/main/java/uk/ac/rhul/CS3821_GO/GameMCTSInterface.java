@@ -1,6 +1,5 @@
 package uk.ac.rhul.CS3821_GO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface GameMCTSInterface {

@@ -1,8 +1,12 @@
-package uk.ac.rhul.CS3821_GO;
+package uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.Intersection;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.PlayerModel;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.StoneGroups;
+import uk.ac.rhul.CS3821_GO.GoDemo.GameModelImpl.StoneTypes;
 
 import java.util.Set;
 
